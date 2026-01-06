@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Session Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Noto+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101022",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased min-h-screen flex flex-col">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-10 bg-background-light dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto w-full">
+<button class="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Session Summary</h2>
+<button class="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">ios_share</span>
+</button>
+</div>
+</div>
+<!-- Main Content -->
+<div class="flex-1 flex flex-col items-center max-w-md mx-auto w-full px-4 pt-6 pb-12 overflow-y-auto">
+<!-- Hero Section -->
+<div class="flex flex-col items-center justify-center mb-8 w-full">
+<div class="relative mb-6">
+<!-- Circular Progress with Gradient -->
+<div class="size-32 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-[3px] shadow-[0_0_20px_rgba(19,19,236,0.5)]">
+<div class="size-full rounded-full bg-background-light dark:bg-background-dark flex items-center justify-center flex-col">
+<span class="text-4xl">🎉</span>
+</div>
+</div>
+<!-- Badge -->
+<div class="absolute -bottom-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-background-light dark:border-background-dark">
+                    +20
+                </div>
+</div>
+<h1 class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight text-center mb-2">
+                Session Complete!
+            </h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal text-center max-w-[280px]">
+                You conquered <span class="text-primary font-bold">20 words</span> today. Great progress on your GRE journey.
+            </p>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-3 gap-3 w-full mb-8">
+<!-- Mastered Card -->
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#1e1e2d] border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+<p class="text-xs font-bold uppercase tracking-wider">Mastered</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-none">14</p>
+</div>
+<!-- Review Card -->
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#1e1e2d] border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-1.5 text-amber-500">
+<span class="material-symbols-outlined text-[18px]">psychology_alt</span>
+<p class="text-xs font-bold uppercase tracking-wider">Review</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-none">3</p>
+</div>
+<!-- Relearn Card -->
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#1e1e2d] border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-1.5 text-red-500">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<p class="text-xs font-bold uppercase tracking-wider">Relearn</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-none">3</p>
+</div>
+</div>
+<!-- Action List -->
+<div class="flex flex-col gap-3 w-full mt-auto">
+<!-- Primary Action -->
+<button class="relative group w-full cursor-pointer flex items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-primary hover:bg-blue-700 transition-colors shadow-[0_4px_14px_0_rgba(19,19,236,0.39)]">
+<span class="absolute inset-0 w-full h-full bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+<span class="flex items-center gap-2 text-white text-base font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined">quiz</span>
+                    Create a test from these 20
+                </span>
+</button>
+<!-- Secondary Action -->
+<button class="w-full cursor-pointer flex items-center justify-center rounded-lg h-14 px-5 bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="flex items-center gap-2 text-slate-900 dark:text-white text-base font-semibold leading-normal">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">playlist_add</span>
+                    Add unknown to "Weak List"
+                </span>
+</button>
+<!-- Tertiary Action -->
+<button class="w-full cursor-pointer flex items-center justify-center rounded-lg h-12 px-5 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors">
+<span class="flex items-center gap-2 text-sm font-medium leading-normal">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Share progress (Offline export)
+                </span>
+</button>
+</div>
+</div>
+<!-- Bottom Navigation Placehoder / Footer -->
+<div class="border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark pb-safe">
+<div class="flex justify-center p-4">
+<button class="text-primary text-sm font-semibold hover:underline">
+                Return to Home
+            </button>
+</div>
+</div>
+<style>
+        /* Safe area padding for bottom navigation on iPhone X+ */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</body></html>

@@ -1,0 +1,6 @@
+StartDate = "28/12/2025"
+Count = 1
+Today = "28/12/2025"
+Streak = 1
+MaxStreak = 1
+StreakDays = 28

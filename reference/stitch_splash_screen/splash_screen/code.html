@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GRE.World Splash Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101022",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased selection:bg-primary selection:text-white overflow-hidden">
+<div class="relative flex h-screen w-full flex-col justify-between overflow-hidden">
+<!-- Background Decor (Gradients) -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+<!-- Top Left Glow -->
+<div class="absolute top-[-10%] left-[-20%] w-[600px] h-[600px] bg-primary/10 dark:bg-primary/20 rounded-full blur-[100px]"></div>
+<!-- Bottom Right Glow -->
+<div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-400/10 dark:bg-blue-900/20 rounded-full blur-[80px]"></div>
+</div>
+<!-- Main Content Area -->
+<div class="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pt-10 pb-4 w-full max-w-md mx-auto">
+<!-- Logo Section -->
+<div class="flex flex-col items-center gap-6 mb-8">
+<!-- Icon Container -->
+<div class="relative flex items-center justify-center w-24 h-24 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-white/10">
+<span class="material-symbols-outlined text-5xl text-primary">school</span>
+</div>
+<!-- HeadlineText Component Style -->
+<div class="text-center">
+<h1 class="text-slate-900 dark:text-white tracking-tight text-[36px] font-bold leading-tight px-4 pb-2">
+                        GRE<span class="text-primary">.World</span>
+</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium tracking-wide uppercase opacity-90">
+                        Vocabulary Arena
+                    </p>
+</div>
+</div>
+<!-- Central Visual (EmptyState style) -->
+<div class="w-full max-w-[260px] aspect-square relative my-4 opacity-100 mix-blend-hard-light dark:mix-blend-normal">
+<div class="bg-center bg-no-repeat bg-contain w-full h-full rounded-full" data-alt="Abstract radial gradient pattern representing data scanning and focus" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCBZWwiG_nXfGnJRoy_TkfY9DNPbm3PRqHNN5L5DSsNS7QQpQi6F_Tr-11dL6uIt1e2r0ja4GHWnFwtF03ce2nR9Orpio1aheUkendwYzZi7AIhCy9JFUMfe2V7whq9YL0SDD7_TKplE-hhLULmll7JyPZBCdm_NJ9hJf-e-RPS58o9NuSXFxobZkMGJRjssl6_zVOO2-I0U-TwCfFTj8F0uGjhQxrATNW2zis66dNQUPt2bntWSThLGQk7qwWAwO39z72QCkrSt64Q");'>
+</div>
+</div>
+</div>
+<!-- Bottom Section (Loading + CTA) -->
+<div class="relative z-10 w-full max-w-md mx-auto px-6 pb-12 flex flex-col gap-8">
+<!-- ProgressBar Component Style -->
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-end px-1">
+<!-- BodyText Component Style for Status -->
+<p class="text-slate-700 dark:text-white text-base font-medium leading-normal">
+                        Initializing streaks...
+                    </p>
+<span class="text-primary text-sm font-bold font-mono">100%</span>
+</div>
+<div class="h-2 w-full rounded-full bg-slate-200 dark:bg-[#3b3b54]">
+<div class="h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(19,19,236,0.5)]" style="width: 100%;"></div>
+</div>
+<p class="text-slate-500 dark:text-[#9d9db9] text-sm font-normal leading-normal text-center pt-1">
+                    Importing core knowledge base complete.
+                </p>
+</div>
+<!-- SingleButton Component Style -->
+<div class="w-full">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+<span class="truncate mr-2">Enter the Arena</span>
+<span class="material-symbols-outlined text-[20px]">swords</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>List Details - GRE Vocab</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "primary-hover": "#0f0fbc",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111118",
+                        "surface-dark": "#1c1c2e",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem", 
+                        "lg": "0.75rem", 
+                        "xl": "1rem", 
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for the donut chart since Tailwind doesn't do conic-gradients easily with arbitrary values in config */
+        .donut-chart {
+            background: conic-gradient(
+                #1313ec 0% 30%, 
+                #2d2d44 30% 100%
+            );
+            border-radius: 50%;
+        }
+        
+        /* iOS-like button press effect */
+        .btn-press:active {
+            transform: scale(0.98);
+            transition: transform 0.1s;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-white min-h-screen flex flex-col selection:bg-primary selection:text-white">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-4 pt-12 pb-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-200 dark:border-white/5">
+<button class="flex items-center justify-center w-10 h-10 -ml-2 text-slate-600 dark:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors btn-press">
+<span class="material-symbols-outlined text-[28px]">chevron_left</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight text-center truncate px-2">Common Words 1</h1>
+<button class="flex items-center justify-center w-10 h-10 -mr-2 text-slate-600 dark:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors btn-press">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</button>
+</header>
+<main class="flex-1 flex flex-col w-full max-w-md mx-auto px-5 pt-4 pb-8 gap-8">
+<!-- Headline -->
+<div class="text-center space-y-1">
+<p class="text-sm font-medium text-primary uppercase tracking-wider">Vocabulary List</p>
+<h2 class="text-3xl font-bold tracking-tight leading-tight">Barron's 333 - List 1</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Targeting High-Frequency Words</p>
+</div>
+<!-- Progress Visualization Section -->
+<div class="flex flex-col items-center justify-center py-4">
+<!-- Donut Chart -->
+<div class="relative w-48 h-48 donut-chart shadow-[0_0_40px_-10px_rgba(19,19,236,0.3)]">
+<!-- Inner Circle for Donut Effect -->
+<div class="absolute inset-2 bg-background-light dark:bg-background-dark rounded-full flex flex-col items-center justify-center z-10">
+<span class="text-4xl font-bold text-slate-900 dark:text-white">30<span class="text-xl align-top">%</span></span>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-1">Mastery</span>
+</div>
+</div>
+</div>
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary mb-1 text-[28px]">check_circle</span>
+<p class="text-2xl font-bold">30</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Learned</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400 mb-1 text-[28px]">radio_button_unchecked</span>
+<p class="text-2xl font-bold">70</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Remaining</p>
+</div>
+</div>
+<!-- Primary Actions -->
+<div class="flex flex-col gap-4 mt-2">
+<!-- Hero Button -->
+<button class="group relative w-full h-14 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/25 btn-press flex items-center justify-center gap-2 overflow-hidden transition-all">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+<span class="material-symbols-outlined fill-1">play_arrow</span>
+<span>Begin Learning</span>
+</button>
+<!-- Secondary Actions Grid -->
+<div class="grid grid-cols-2 gap-4">
+<button class="h-12 bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-white/10 hover:border-primary/50 dark:hover:border-primary/50 text-slate-700 dark:text-white rounded-xl font-semibold text-sm btn-press flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">refresh</span>
+                    Review Learned
+                </button>
+<button class="h-12 bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-white/10 hover:border-primary/50 dark:hover:border-primary/50 text-slate-700 dark:text-white rounded-xl font-semibold text-sm btn-press flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">style</span>
+                    Flashcards
+                </button>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="mt-auto pt-4 flex justify-center">
+<button class="text-red-500 hover:text-red-400 text-sm font-medium py-2 px-4 rounded-lg hover:bg-red-500/10 transition-colors flex items-center gap-2 btn-press" onclick="document.getElementById('reset-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                Reset Progress
+            </button>
+</div>
+</main>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-4 animate-in fade-in duration-200" id="reset-modal">
+<!-- Modal Content -->
+<div class="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-white/10 scale-100 animate-in zoom-in-95 duration-200">
+<div class="flex flex-col items-center text-center gap-4">
+<div class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500 text-[28px]">warning</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Reset Progress?</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        Are you sure you want to reset all progress for <strong class="text-slate-700 dark:text-slate-200">Common Words 1</strong>? This action cannot be undone.
+                    </p>
+</div>
+<div class="flex flex-col w-full gap-3 mt-2">
+<button class="w-full h-12 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-base btn-press transition-colors">
+                        Yes, Reset Everything
+                    </button>
+<button class="w-full h-12 bg-transparent hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-white rounded-xl font-semibold text-base btn-press transition-colors" onclick="document.getElementById('reset-modal').classList.add('hidden')">
+                        Cancel
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>
