@@ -407,3 +407,68 @@ export const getTodayWordsLearned = async (): Promise<number> => {
   return result?.count ?? 0;
 };
 
+// Testing Center Helpers
+export const getRandomWordsForTest = async (
+  count: number,
+  excludeLearned: boolean = false
+): Promise<Word[]> => {
+  const database = getDatabase();
+  let query = 'SELECT * FROM words';
+  
+  if (excludeLearned) {
+    query += ` WHERE id NOT IN (
+      SELECT word_id FROM learning_progress WHERE mastery_level = 'know_it'
+    )`;
+  }
+  
+  query += ' ORDER BY RANDOM() LIMIT ?';
+  
+  const words = await database.getAllAsync<Word>(query, [count]);
+  return words;
+};
+
+export const getLearnedWordsForTest = async (count: number): Promise<Word[]> => {
+  const database = getDatabase();
+  const words = await database.getAllAsync<Word>(
+    `SELECT w.* FROM words w
+     INNER JOIN learning_progress lp ON w.id = lp.word_id
+     WHERE lp.mastery_level = 'know_it'
+     ORDER BY RANDOM()
+     LIMIT ?`,
+    [count]
+  );
+  return words;
+};
+
+export const getRandomDefinitions = async (
+  excludeWord: string,
+  count: number
+): Promise<string[]> => {
+  const database = getDatabase();
+  const results = await database.getAllAsync<{ definition: string }>(
+    'SELECT DISTINCT definition FROM words WHERE word != ? ORDER BY RANDOM() LIMIT ?',
+    [excludeWord, count]
+  );
+  return results.map((r) => r.definition);
+};
+
+export const getTestAccuracy = async (): Promise<number> => {
+  const database = getDatabase();
+  const scores = await getTestScores();
+  
+  if (scores.length === 0) return 0;
+  
+  // Calculate average from recent 10 tests
+  const recentScores = scores.slice(0, 10);
+  let totalCorrect = 0;
+  let totalQuestions = 0;
+  
+  recentScores.forEach((score) => {
+    const [correct, total] = score.score.split('/').map(Number);
+    totalCorrect += correct;
+    totalQuestions += total;
+  });
+  
+  return totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+};
+

@@ -13,6 +13,9 @@ export default function MainLayout() {
       <Stack.Screen name="list-detail" />
       <Stack.Screen name="learning-session" />
       <Stack.Screen name="session-summary" />
+      <Stack.Screen name="test-mcq" />
+      <Stack.Screen name="test-written" />
+      <Stack.Screen name="test-results" />
     </Stack>
   );
 }

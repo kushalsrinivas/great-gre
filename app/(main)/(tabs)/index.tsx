@@ -95,7 +95,7 @@ export default function HomeScreen() {
       <View style={styles.actionsGrid}>
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push('/(main)/(tabs)/lists')}
+          onPress={() => router.push('/(main)/(tabs)/test')}
         >
           <View style={[styles.actionIcon, { backgroundColor: 'rgba(16, 185, 129, 0.2)' }]}>
             <Text style={styles.actionIconText}>📋</Text>
