@@ -47,6 +47,7 @@ export const initDatabase = async (): Promise<void> => {
         mastery_level TEXT NOT NULL CHECK(mastery_level IN ('dont_know', 'unsure', 'know_it')),
         last_reviewed TEXT NOT NULL,
         review_count INTEGER DEFAULT 1,
+        is_bookmarked INTEGER DEFAULT 0,
         FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
         UNIQUE(word_id)
       );
@@ -65,6 +66,20 @@ export const initDatabase = async (): Promise<void> => {
       CREATE INDEX IF NOT EXISTS idx_progress_word ON learning_progress(word_id);
       CREATE INDEX IF NOT EXISTS idx_progress_mastery ON learning_progress(mastery_level);
     `);
+    
+    // Migration: Add is_bookmarked column if it doesn't exist
+    try {
+      const tableInfo = await db.getAllAsync<any>('PRAGMA table_info(learning_progress)');
+      const hasBookmarkColumn = tableInfo.some((col: any) => col.name === 'is_bookmarked');
+      
+      if (!hasBookmarkColumn) {
+        console.log('Adding is_bookmarked column to learning_progress table...');
+        await db.execAsync('ALTER TABLE learning_progress ADD COLUMN is_bookmarked INTEGER DEFAULT 0');
+        console.log('Migration completed: is_bookmarked column added');
+      }
+    } catch (migrationError) {
+      console.error('Migration error:', migrationError);
+    }
     
     console.log('Database initialized successfully');
   } catch (error) {
@@ -319,6 +334,7 @@ export const getLearningProgress = async (wordId: number): Promise<LearningProgr
     masteryLevel: progress.mastery_level,
     lastReviewed: progress.last_reviewed,
     reviewCount: progress.review_count,
+    isBookmarked: progress.is_bookmarked === 1,
   };
 };
 
@@ -335,6 +351,7 @@ export const getAllLearningProgress = async (): Promise<LearningProgress[]> => {
     masteryLevel: p.mastery_level,
     lastReviewed: p.last_reviewed,
     reviewCount: p.review_count,
+    isBookmarked: p.is_bookmarked === 1,
   }));
 };
 
@@ -472,3 +489,57 @@ export const getTestAccuracy = async (): Promise<number> => {
   return totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 };
 
+// Bookmarking Operations
+export const toggleBookmark = async (wordId: number, word: string): Promise<boolean> => {
+  const database = getDatabase();
+  
+  // Check if progress entry exists
+  const existing = await database.getFirstAsync<any>(
+    'SELECT * FROM learning_progress WHERE word_id = ?',
+    [wordId]
+  );
+  
+  if (existing) {
+    // Toggle bookmark
+    const newBookmarkState = existing.is_bookmarked === 1 ? 0 : 1;
+    await database.runAsync(
+      'UPDATE learning_progress SET is_bookmarked = ? WHERE word_id = ?',
+      [newBookmarkState, wordId]
+    );
+    return newBookmarkState === 1;
+  } else {
+    // Create new entry with bookmark
+    const now = new Date().toISOString();
+    await database.runAsync(
+      'INSERT INTO learning_progress (word_id, word, mastery_level, last_reviewed, review_count, is_bookmarked) VALUES (?, ?, ?, ?, ?, ?)',
+      [wordId, word, 'dont_know', now, 0, 1]
+    );
+    return true;
+  }
+};
+
+export const getBookmarkedWords = async (): Promise<LearningProgress[]> => {
+  const database = getDatabase();
+  const bookmarked = await database.getAllAsync<any>(
+    'SELECT * FROM learning_progress WHERE is_bookmarked = 1 ORDER BY last_reviewed DESC'
+  );
+  
+  return bookmarked.map((p) => ({
+    id: p.id,
+    wordId: p.word_id,
+    word: p.word,
+    masteryLevel: p.mastery_level,
+    lastReviewed: p.last_reviewed,
+    reviewCount: p.review_count,
+    isBookmarked: true,
+  }));
+};
+
+export const isWordBookmarked = async (wordId: number): Promise<boolean> => {
+  const database = getDatabase();
+  const result = await database.getFirstAsync<any>(
+    'SELECT is_bookmarked FROM learning_progress WHERE word_id = ?',
+    [wordId]
+  );
+  return result?.is_bookmarked === 1;
+};

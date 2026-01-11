@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -8,13 +9,35 @@ import { initializeUserProfile } from '@/lib/storage/async-storage';
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [learningVibe, setLearningVibe] = useState<'chill' | 'intense'>('chill');
-  const [greTestDate, setGreTestDate] = useState('');
+  const [greMonth, setGreMonth] = useState('');
+  const [greYear, setGreYear] = useState('');
   const [dailyGoal, setDailyGoal] = useState(10);
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const [validationError, setValidationError] = useState('');
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
 
   const handleNext = () => {
+    // Validate step 3
+    if (step === 3) {
+      if (!name.trim()) {
+        setValidationError('Please enter your name');
+        return;
+      }
+      setValidationError('');
+    }
+    
     if (step < 3) {
       setStep(step + 1);
     } else {
@@ -24,13 +47,16 @@ export default function OnboardingScreen() {
 
   const handleComplete = async () => {
     try {
+      // Format GRE test date if provided
+      const greTestDate = greMonth && greYear ? `${greMonth} ${greYear}` : undefined;
+      
       // Initialize user profile
       await initializeUserProfile(
         name || 'Scholar',
         new Date().toISOString(),
         dailyGoal,
         learningVibe,
-        greTestDate || undefined
+        greTestDate
       );
       
       // Navigate to main app
@@ -146,20 +172,36 @@ export default function OnboardingScreen() {
               <Text style={styles.helperText}>words per day</Text>
 
               <Text style={styles.label}>When is your GRE test? (Optional)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g., June 2026"
-                placeholderTextColor={Colors.textSecondary}
-                value={greTestDate}
-                onChangeText={setGreTestDate}
-              />
+              <View style={styles.datePickerContainer}>
+                <TouchableOpacity
+                  style={styles.datePickerButton}
+                  onPress={() => setShowMonthPicker(true)}
+                >
+                  <Text style={[styles.datePickerText, !greMonth && styles.datePickerPlaceholder]}>
+                    {greMonth || 'Month'}
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={styles.datePickerButton}
+                  onPress={() => setShowYearPicker(true)}
+                >
+                  <Text style={[styles.datePickerText, !greYear && styles.datePickerPlaceholder]}>
+                    {greYear || 'Year'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              
+              {validationError ? (
+                <Text style={styles.errorText}>{validationError}</Text>
+              ) : null}
             </Card>
           </View>
         )}
       </ScrollView>
 
       {/* Progress indicator */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing['2xl']) }]}>
         <View style={styles.progressDots}>
           {[1, 2, 3].map((dot) => (
             <View
@@ -179,6 +221,78 @@ export default function OnboardingScreen() {
           style={styles.button}
         />
       </View>
+
+      {/* Month Picker Modal */}
+      <Modal
+        visible={showMonthPicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowMonthPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.pickerModal}>
+            <View style={styles.pickerHeader}>
+              <Text style={styles.pickerTitle}>Select Month</Text>
+              <TouchableOpacity onPress={() => setShowMonthPicker(false)}>
+                <Text style={styles.pickerClose}>Done</Text>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={months}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.pickerItem}
+                  onPress={() => {
+                    setGreMonth(item);
+                    setShowMonthPicker(false);
+                  }}
+                >
+                  <Text style={[styles.pickerItemText, greMonth === item && styles.pickerItemSelected]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Year Picker Modal */}
+      <Modal
+        visible={showYearPicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowYearPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.pickerModal}>
+            <View style={styles.pickerHeader}>
+              <Text style={styles.pickerTitle}>Select Year</Text>
+              <TouchableOpacity onPress={() => setShowYearPicker(false)}>
+                <Text style={styles.pickerClose}>Done</Text>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={years}
+              keyExtractor={(item) => item.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.pickerItem}
+                  onPress={() => {
+                    setGreYear(item.toString());
+                    setShowYearPicker(false);
+                  }}
+                >
+                  <Text style={[styles.pickerItemText, greYear === item.toString() && styles.pickerItemSelected]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -341,6 +455,73 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
+  },
+  datePickerContainer: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  datePickerButton: {
+    flex: 1,
+    backgroundColor: Colors.cardBackgroundLight,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    alignItems: 'center',
+  },
+  datePickerText: {
+    fontSize: Typography.base,
+    color: Colors.text,
+    fontWeight: Typography.semibold,
+  },
+  datePickerPlaceholder: {
+    color: Colors.textSecondary,
+    fontWeight: Typography.normal,
+  },
+  errorText: {
+    fontSize: Typography.sm,
+    color: '#EF4444',
+    marginTop: Spacing.sm,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  pickerModal: {
+    backgroundColor: Colors.cardBackground,
+    borderTopLeftRadius: BorderRadius.xl,
+    borderTopRightRadius: BorderRadius.xl,
+    maxHeight: '50%',
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.xl,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  pickerTitle: {
+    fontSize: Typography.lg,
+    fontWeight: Typography.bold,
+    color: Colors.text,
+  },
+  pickerClose: {
+    fontSize: Typography.base,
+    fontWeight: Typography.semibold,
+    color: Colors.primary,
+  },
+  pickerItem: {
+    padding: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  pickerItemText: {
+    fontSize: Typography.base,
+    color: Colors.text,
+  },
+  pickerItemSelected: {
+    color: Colors.primary,
+    fontWeight: Typography.bold,
   },
 });
 

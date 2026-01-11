@@ -32,6 +32,7 @@ export interface LearningProgress {
   masteryLevel: 'dont_know' | 'unsure' | 'know_it';
   lastReviewed: string; // ISO date string
   reviewCount: number;
+  isBookmarked?: boolean;
 }
 
 export interface UserProfile {

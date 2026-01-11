@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -9,11 +10,12 @@ import { Card } from '@/components/ui/Card';
 import { useProgress } from '@/contexts/ProgressContext';
 import { useUser } from '@/contexts/UserContext';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { getVocabularyEntry } from '@/lib/storage/database';
+import { getVocabularyEntry, isWordBookmarked, toggleBookmark } from '@/lib/storage/database';
 import { VocabularyEntry } from '@/lib/types';
 
 export default function LearningSessionScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { listName, mode } = useLocalSearchParams<{ listName: string; mode: string }>();
   const { currentSession, startSession, answerWord, completeWord, goToPreviousWord, getCurrentWord, endSession } = useProgress();
   const { addWordsLearned, addGems } = useUser();
@@ -61,6 +63,18 @@ export default function LearningSessionScreen() {
     
     const entry = await getVocabularyEntry(currentWord.word);
     setVocabularyEntry(entry);
+    
+    // Check bookmark status
+    const bookmarked = await isWordBookmarked(currentWord.id);
+    setIsBookmarked(bookmarked);
+  };
+  
+  const handleBookmark = async () => {
+    const currentWord = getCurrentWord();
+    if (!currentWord) return;
+    
+    const newBookmarkState = await toggleBookmark(currentWord.id, currentWord.word);
+    setIsBookmarked(newBookmarkState);
   };
 
   const handleAnswer = async (masteryLevel: 'dont_know' | 'unsure' | 'know_it') => {
@@ -193,7 +207,7 @@ export default function LearningSessionScreen() {
           pronunciation={currentWord.word.toLowerCase()}
           showBookmark={true}
           isBookmarked={isBookmarked}
-          onBookmark={() => setIsBookmarked(!isBookmarked)}
+          onBookmark={handleBookmark}
           hideDefinition={isReviewMode && !definitionRevealed}
           onRevealDefinition={() => setDefinitionRevealed(true)}
         />
@@ -201,7 +215,7 @@ export default function LearningSessionScreen() {
 
       {/* Answer Buttons */}
       {isLearnMode ? (
-        <View style={styles.answerSection}>
+        <View style={[styles.answerSection, { paddingBottom: Math.max(insets.bottom, Spacing.xl) }]}>
           <TouchableOpacity
             style={[styles.answerButton, styles.answerButtonGoBack]}
             onPress={handleGoBack}
@@ -220,7 +234,7 @@ export default function LearningSessionScreen() {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.answerSection}>
+        <View style={[styles.answerSection, { paddingBottom: Math.max(insets.bottom, Spacing.xl) }]}>
           <TouchableOpacity
             style={[styles.answerButton, styles.answerButtonDontKnow]}
             onPress={() => handleAnswer('dont_know')}

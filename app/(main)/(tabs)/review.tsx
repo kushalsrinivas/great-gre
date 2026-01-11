@@ -5,7 +5,7 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useState, useEffect } from 'react';
-import { getAllLearningProgress, getVocabularyEntry } from '@/lib/storage/database';
+import { getAllLearningProgress, getVocabularyEntry, getBookmarkedWords } from '@/lib/storage/database';
 import { LearningProgress, VocabularyEntry } from '@/lib/types';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
@@ -13,6 +13,7 @@ export default function ReviewScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [learnedWords, setLearnedWords] = useState<LearningProgress[]>([]);
+  const [bookmarkedWords, setBookmarkedWords] = useState<LearningProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedWord, setSelectedWord] = useState<{ word: string; vocab: VocabularyEntry } | null>(null);
@@ -29,6 +30,10 @@ export default function ReviewScreen() {
       // Only show words with 'know_it' mastery level
       const learned = progress.filter(p => p.masteryLevel === 'know_it');
       setLearnedWords(learned);
+      
+      // Load bookmarked words
+      const bookmarked = await getBookmarkedWords();
+      setBookmarkedWords(bookmarked);
     } catch (error) {
       console.error('Error loading learned words:', error);
     } finally {
@@ -110,6 +115,37 @@ export default function ReviewScreen() {
         </View>
       )}
 
+      {/* Bookmarked Words Section */}
+      {bookmarkedWords.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Saved Words</Text>
+          <Text style={styles.sectionSubtitle}>
+            {bookmarkedWords.length} {bookmarkedWords.length === 1 ? 'word' : 'words'} saved for quick review
+          </Text>
+          
+          <View style={styles.wordsGrid}>
+            {bookmarkedWords.map((word, index) => (
+              <TouchableOpacity
+                key={word.id || index}
+                style={styles.wordCard}
+                onPress={() => handleWordPress(word)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.bookmarkBadge}>
+                  <Text style={styles.bookmarkIcon}>📌</Text>
+                </View>
+                <Text style={styles.wordText}>{word.word}</Text>
+                <View style={styles.wordMeta}>
+                  <Text style={styles.reviewCount}>
+                    {word.reviewCount || 0} {word.reviewCount === 1 ? 'review' : 'reviews'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      )}
+
       {/* Empty State */}
       {learnedWords.length === 0 && (
         <Card style={styles.emptyCard}>
@@ -146,7 +182,7 @@ export default function ReviewScreen() {
                 <Text style={styles.wordText}>{word.word}</Text>
                 <View style={styles.wordMeta}>
                   <Text style={styles.reviewCount}>
-                    {word.reviewCount} {word.reviewCount === 1 ? 'review' : 'reviews'}
+                    {word.reviewCount || 0} {word.reviewCount === 1 ? 'review' : 'reviews'}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -312,6 +348,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     minWidth: '47%',
     maxWidth: '47%',
+    position: 'relative',
   },
   wordText: {
     fontSize: Typography.lg,
@@ -326,6 +363,14 @@ const styles = StyleSheet.create({
   reviewCount: {
     fontSize: Typography.xs,
     color: Colors.textSecondary,
+  },
+  bookmarkBadge: {
+    position: 'absolute',
+    top: Spacing.sm,
+    right: Spacing.sm,
+  },
+  bookmarkIcon: {
+    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,

@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { Colors, Typography, Spacing } from '@/lib/constants/theme';
 import { Button } from '@/components/ui/Button';
@@ -22,6 +23,7 @@ interface MCQQuestion {
 
 export default function MCQTestScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type: string }>();
   const [questions, setQuestions] = useState<MCQQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -218,7 +220,7 @@ export default function MCQTestScreen() {
 
       {/* Next Button */}
       {selectedIndex !== null && (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing['2xl']) }]}>
           <Button
             title={currentIndex < questions.length - 1 ? 'Next Question →' : 'View Results'}
             onPress={handleNext}

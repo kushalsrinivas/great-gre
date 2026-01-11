@@ -1,20 +1,32 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { Button } from '@/components/ui/Button';
-import { useUser } from '@/contexts/UserContext';
-import { useEffect } from 'react';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { getEncouragementMessage } from '@/lib/utils';
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { useUser } from "@/contexts/UserContext";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/lib/constants/theme";
+import { getEncouragementMessage } from "@/lib/utils";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user, todayProgress, dailyGoal, streak, gems, refreshUser } = useUser();
+  const { user, todayProgress, dailyGoal, streak, gems, refreshUser } =
+    useUser();
 
   useEffect(() => {
     refreshUser();
@@ -24,8 +36,8 @@ export default function HomeScreen() {
   const encouragementText = getEncouragementMessage(todayProgress, dailyGoal);
 
   return (
-    <ScrollView 
-      style={styles.container} 
+    <ScrollView
+      style={styles.container}
       contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
       showsVerticalScrollIndicator={false}
     >
@@ -34,16 +46,18 @@ export default function HomeScreen() {
         <View style={styles.headerLeft}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>
-              {user?.name?.charAt(0).toUpperCase() || 'S'}
+              {user?.name?.charAt(0).toUpperCase() || "S"}
             </Text>
             <View style={styles.onlineIndicator} />
           </View>
           <View>
             <Text style={styles.welcomeText}>Welcome back,</Text>
-            <Text style={styles.userName}>Scholar {user?.name || 'Alex'}</Text>
+            <Text style={styles.userName}>Scholar {user?.name || "Alex"}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => router.push('/(main)/(tabs)/settings')}>
+        <TouchableOpacity
+          onPress={() => router.push("/(main)/(tabs)/settings")}
+        >
           <IconSymbol name="gearshape.fill" size={28} color={Colors.text} />
         </TouchableOpacity>
       </View>
@@ -66,6 +80,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Today's Goal Card */}
+
       <Card style={styles.goalCard}>
         <View style={styles.goalHeader}>
           <Text style={styles.goalLabel}>Today's Goal</Text>
@@ -74,14 +89,18 @@ export default function HomeScreen() {
           </Text>
         </View>
         <Text style={styles.goalTitle}>Learn {dailyGoal} new words</Text>
-        <ProgressBar progress={progressPercentage} height={10} style={styles.progressBar} />
+        <ProgressBar
+          progress={progressPercentage}
+          height={10}
+          style={styles.progressBar}
+        />
         <Text style={styles.encouragementText}>{encouragementText}</Text>
       </Card>
 
       {/* Learn Words - Primary Action */}
       <TouchableOpacity
         style={styles.primaryCard}
-        onPress={() => router.push('/(main)/(tabs)/lists')}
+        onPress={() => router.push("/(main)/(tabs)/lists")}
       >
         <View style={styles.primaryCardContent}>
           <View style={styles.primaryCardIcon}>
@@ -92,18 +111,36 @@ export default function HomeScreen() {
               <Text style={styles.startBadgeText}>START HERE</Text>
             </View>
             <Text style={styles.primaryCardTitle}>Learn Words</Text>
-            <Text style={styles.primaryCardSubtitle}>Start your daily session</Text>
+            <Text style={styles.primaryCardSubtitle}>
+              Start your daily session
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
+
+      <View style={styles.goalContainer}>
+        <Button
+          title="Review Learned Words"
+          onPress={() => router.push("/(main)/(tabs)/review")}
+          variant="secondary"
+          size="large"
+          style={styles.reviewButton}
+          icon={<Text style={styles.reviewIcon}>🔄</Text>}
+        />
+      </View>
 
       {/* Action Cards Grid */}
       <View style={styles.actionsGrid}>
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push('/(main)/(tabs)/test')}
+          onPress={() => router.push("/(main)/(tabs)/test")}
         >
-          <View style={[styles.actionIcon, { backgroundColor: 'rgba(16, 185, 129, 0.2)' }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              { backgroundColor: "rgba(16, 185, 129, 0.2)" },
+            ]}
+          >
             <Text style={styles.actionIconText}>📋</Text>
           </View>
           <Text style={styles.actionTitle}>Take Test</Text>
@@ -112,9 +149,14 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push('/(main)/(tabs)/review')}
+          onPress={() => router.push("/(main)/(tabs)/review")}
         >
-          <View style={[styles.actionIcon, { backgroundColor: 'rgba(168, 85, 247, 0.2)' }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              { backgroundColor: "rgba(168, 85, 247, 0.2)" },
+            ]}
+          >
             <Text style={styles.actionIconText}>📊</Text>
           </View>
           <Text style={styles.actionTitle}>Progress</Text>
@@ -125,9 +167,14 @@ export default function HomeScreen() {
       <View style={styles.actionsGrid}>
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push('/(main)/(tabs)/lists')}
+          onPress={() => router.push("/(main)/(tabs)/lists")}
         >
-          <View style={[styles.actionIcon, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              { backgroundColor: "rgba(245, 158, 11, 0.2)" },
+            ]}
+          >
             <Text style={styles.actionIconText}>📚</Text>
           </View>
           <Text style={styles.actionTitle}>Word Lists</Text>
@@ -136,9 +183,14 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push('/(main)/(tabs)/lists')}
+          onPress={() => router.push("/(main)/(tabs)/lists")}
         >
-          <View style={[styles.actionIcon, { backgroundColor: 'rgba(236, 72, 153, 0.2)' }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              { backgroundColor: "rgba(236, 72, 153, 0.2)" },
+            ]}
+          >
             <Text style={styles.actionIconText}>🔍</Text>
           </View>
           <Text style={styles.actionTitle}>Search</Text>
@@ -155,15 +207,6 @@ export default function HomeScreen() {
             <Text style={styles.checkmark}>✓</Text>
           </View>
         </View>
-
-        <Button
-          title="Review 15 Words"
-          onPress={() => router.push('/(main)/(tabs)/review')}
-          variant="secondary"
-          size="large"
-          style={styles.reviewButton}
-          icon={<Text style={styles.reviewIcon}>🔄</Text>}
-        />
       </View>
     </ScrollView>
   );
@@ -175,15 +218,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing['2xl'],
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing["2xl"],
     paddingBottom: Spacing.lg,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   avatar: {
@@ -191,9 +234,9 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   avatarText: {
     fontSize: Typography.xl,
@@ -201,7 +244,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   onlineIndicator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 2,
     right: 2,
     width: 12,
@@ -215,35 +258,39 @@ const styles = StyleSheet.create({
     fontSize: Typography.sm,
     color: Colors.textSecondary,
   },
+  goalContainer: {
+    marginHorizontal: Spacing["2xl"],
+    marginBottom: Spacing.xl,
+  },
   userName: {
     fontSize: Typography.lg,
     fontWeight: Typography.bold,
     color: Colors.text,
   },
   greeting: {
-    fontSize: Typography['3xl'],
+    fontSize: Typography["3xl"],
     fontWeight: Typography.extrabold,
     color: Colors.text,
-    paddingHorizontal: Spacing['2xl'],
+    paddingHorizontal: Spacing["2xl"],
     marginBottom: Spacing.lg,
   },
   badgesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
-    paddingHorizontal: Spacing['2xl'],
+    paddingHorizontal: Spacing["2xl"],
     marginBottom: Spacing.xl,
   },
   badgeIcon: {
     fontSize: 20,
   },
   goalCard: {
-    marginHorizontal: Spacing['2xl'],
+    marginHorizontal: Spacing["2xl"],
     marginBottom: Spacing.xl,
   },
   goalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.sm,
   },
   goalLabel: {
@@ -252,7 +299,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.medium,
   },
   goalProgress: {
-    fontSize: Typography['2xl'],
+    fontSize: Typography["2xl"],
     fontWeight: Typography.bold,
     color: Colors.primary,
   },
@@ -268,27 +315,27 @@ const styles = StyleSheet.create({
   encouragementText: {
     fontSize: Typography.sm,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   primaryCard: {
     backgroundColor: Colors.primary,
-    marginHorizontal: Spacing['2xl'],
+    marginHorizontal: Spacing["2xl"],
     marginBottom: Spacing.xl,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
   },
   primaryCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.lg,
   },
   primaryCardIcon: {
     width: 60,
     height: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   primaryIconText: {
     fontSize: 32,
@@ -297,8 +344,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   startBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -311,19 +358,19 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   primaryCardTitle: {
-    fontSize: Typography['2xl'],
+    fontSize: Typography["2xl"],
     fontWeight: Typography.extrabold,
     color: Colors.text,
     marginBottom: Spacing.xs,
   },
   primaryCardSubtitle: {
     fontSize: Typography.base,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: "rgba(255, 255, 255, 0.9)",
   },
   actionsGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
-    paddingHorizontal: Spacing['2xl'],
+    paddingHorizontal: Spacing["2xl"],
     marginBottom: Spacing.md,
   },
   actionCard: {
@@ -336,8 +383,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: Spacing.md,
   },
   actionIconText: {
@@ -354,9 +401,9 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   bottomSection: {
-    padding: Spacing['2xl'],
+    padding: Spacing["2xl"],
     gap: Spacing.lg,
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing["3xl"],
   },
   learnedToday: {
     backgroundColor: Colors.cardBackground,
@@ -371,12 +418,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   learnedTodayValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   learnedTodayNumber: {
-    fontSize: Typography['2xl'],
+    fontSize: Typography["2xl"],
     fontWeight: Typography.bold,
     color: Colors.text,
   },
@@ -385,10 +432,9 @@ const styles = StyleSheet.create({
     color: Colors.success,
   },
   reviewButton: {
-    width: '100%',
+    width: "100%",
   },
   reviewIcon: {
     fontSize: 20,
   },
 });
-
