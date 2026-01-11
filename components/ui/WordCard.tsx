@@ -13,6 +13,8 @@ interface WordCardProps {
   showBookmark?: boolean;
   onBookmark?: () => void;
   isBookmarked?: boolean;
+  hideDefinition?: boolean;
+  onRevealDefinition?: () => void;
 }
 
 export const WordCard: React.FC<WordCardProps> = ({
@@ -25,6 +27,8 @@ export const WordCard: React.FC<WordCardProps> = ({
   showBookmark = true,
   onBookmark,
   isBookmarked = false,
+  hideDefinition = false,
+  onRevealDefinition,
 }) => {
   // Generate example if not provided
   const displayExample =
@@ -55,39 +59,52 @@ export const WordCard: React.FC<WordCardProps> = ({
         </View>
       )}
 
-      <View style={styles.divider}>
-        <Text style={styles.dividerText}>DEFINITION</Text>
-      </View>
-
-      <Text style={styles.definition}>{definition}</Text>
-
-      {vocabularyEntry?.shortExplanation && (
-        <Text style={styles.explanation}>{vocabularyEntry.shortExplanation}</Text>
-      )}
-
-      {displayExample && (
-        <View style={styles.exampleContainer}>
-          <Text style={styles.exampleLabel}>EXAMPLE</Text>
-          <Text style={styles.exampleText}>
-            {/* Highlight the word in the example */}
-            {displayExample.split(new RegExp(`(${word})`, 'gi')).map((part, index) =>
-              part.toLowerCase() === word.toLowerCase() ? (
-                <Text key={index} style={styles.highlightedWord}>
-                  {part}
-                </Text>
-              ) : (
-                <Text key={index}>{part}</Text>
-              )
-            )}
+      {hideDefinition ? (
+        <View style={styles.hiddenDefinitionContainer}>
+          <Text style={styles.hiddenDefinitionText}>
+            Try to recall the definition before revealing
           </Text>
+          <TouchableOpacity style={styles.revealButton} onPress={onRevealDefinition}>
+            <Text style={styles.revealButtonText}>REVEAL DEFINITION</Text>
+          </TouchableOpacity>
         </View>
-      )}
+      ) : (
+        <>
+          <View style={styles.divider}>
+            <Text style={styles.dividerText}>DEFINITION</Text>
+          </View>
 
-      {vocabularyEntry?.synonyms && (
-        <View style={styles.synonymsContainer}>
-          <Text style={styles.synonymsLabel}>SYNONYMS</Text>
-          <Text style={styles.synonymsText}>{vocabularyEntry.synonyms}</Text>
-        </View>
+          <Text style={styles.definition}>{definition}</Text>
+
+          {vocabularyEntry?.shortExplanation && (
+            <Text style={styles.explanation}>{vocabularyEntry.shortExplanation}</Text>
+          )}
+
+          {displayExample && (
+            <View style={styles.exampleContainer}>
+              <Text style={styles.exampleLabel}>EXAMPLE</Text>
+              <Text style={styles.exampleText}>
+                {/* Highlight the word in the example */}
+                {displayExample.split(new RegExp(`(${word})`, 'gi')).map((part, index) =>
+                  part.toLowerCase() === word.toLowerCase() ? (
+                    <Text key={index} style={styles.highlightedWord}>
+                      {part}
+                    </Text>
+                  ) : (
+                    <Text key={index}>{part}</Text>
+                  )
+                )}
+              </Text>
+            </View>
+          )}
+
+          {vocabularyEntry?.synonyms && (
+            <View style={styles.synonymsContainer}>
+              <Text style={styles.synonymsLabel}>SYNONYMS</Text>
+              <Text style={styles.synonymsText}>{vocabularyEntry.synonyms}</Text>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -211,6 +228,29 @@ const styles = StyleSheet.create({
     fontSize: Typography.sm,
     color: Colors.textSecondary,
     lineHeight: 20,
+  },
+  hiddenDefinitionContainer: {
+    paddingVertical: Spacing['3xl'],
+    alignItems: 'center',
+    gap: Spacing.xl,
+  },
+  hiddenDefinitionText: {
+    fontSize: Typography.base,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  revealButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing['2xl'],
+    borderRadius: BorderRadius.md,
+  },
+  revealButtonText: {
+    fontSize: Typography.sm,
+    fontWeight: Typography.bold,
+    color: Colors.background,
+    letterSpacing: 1,
   },
 });
 

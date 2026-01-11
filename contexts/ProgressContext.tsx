@@ -14,9 +14,12 @@ interface ProgressContextType {
     listName: string,
     wordCount: number,
     order: 'random' | 'serial',
+    mode: 'learn' | 'review',
     startIndex?: number
   ) => Promise<void>;
   answerWord: (masteryLevel: 'dont_know' | 'unsure' | 'know_it') => Promise<void>;
+  completeWord: () => Promise<void>;
+  goToPreviousWord: () => void;
   getCurrentWord: () => Word | null;
   getCurrentVocabulary: () => Promise<VocabularyEntry | null>;
   endSession: () => void;
@@ -35,6 +38,7 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
     listName: string,
     wordCount: number,
     order: 'random' | 'serial',
+    mode: 'learn' | 'review',
     startIndex: number = 0
   ) => {
     try {
@@ -59,6 +63,7 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
         currentIndex: 0,
         totalWords: selectedWords.length,
         startTime: Date.now(),
+        mode,
         results: {
           dontKnow: 0,
           unsure: 0,
@@ -102,6 +107,40 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
     });
   };
 
+  const completeWord = async () => {
+    if (!currentSession) return;
+    
+    const currentWord = currentSession.words[currentSession.currentIndex];
+    
+    // In learn mode, mark as completed (know_it)
+    await saveLearningProgress(currentWord.id, currentWord.word, 'know_it');
+    
+    // Update results
+    const updatedResults = { ...currentSession.results };
+    updatedResults.knowIt++;
+    
+    // Move to next word
+    const nextIndex = currentSession.currentIndex + 1;
+    
+    setCurrentSession({
+      ...currentSession,
+      currentIndex: nextIndex,
+      results: updatedResults,
+    });
+  };
+
+  const goToPreviousWord = () => {
+    if (!currentSession || currentSession.currentIndex === 0) return;
+    
+    // Move to previous word
+    const prevIndex = currentSession.currentIndex - 1;
+    
+    setCurrentSession({
+      ...currentSession,
+      currentIndex: prevIndex,
+    });
+  };
+
   const getCurrentWord = (): Word | null => {
     if (!currentSession || currentSession.currentIndex >= currentSession.totalWords) {
       return null;
@@ -131,6 +170,8 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
         currentSession,
         startSession,
         answerWord,
+        completeWord,
+        goToPreviousWord,
         getCurrentWord,
         getCurrentVocabulary,
         endSession,

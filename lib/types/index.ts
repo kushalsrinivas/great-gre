@@ -77,6 +77,7 @@ export interface LearningSession {
   currentIndex: number;
   totalWords: number;
   startTime: number;
+  mode: 'learn' | 'review';
   results: {
     dontKnow: number;
     unsure: number;

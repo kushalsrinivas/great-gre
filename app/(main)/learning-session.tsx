@@ -15,7 +15,7 @@ import { VocabularyEntry } from '@/lib/types';
 export default function LearningSessionScreen() {
   const router = useRouter();
   const { listName, mode } = useLocalSearchParams<{ listName: string; mode: string }>();
-  const { currentSession, startSession, answerWord, getCurrentWord, endSession } = useProgress();
+  const { currentSession, startSession, answerWord, completeWord, goToPreviousWord, getCurrentWord, endSession } = useProgress();
   const { addWordsLearned, addGems } = useUser();
   
   const [vocabularyEntry, setVocabularyEntry] = useState<VocabularyEntry | null>(null);
@@ -25,6 +25,7 @@ export default function LearningSessionScreen() {
   });
   const [settingsExpanded, setSettingsExpanded] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [definitionRevealed, setDefinitionRevealed] = useState(false);
 
   useEffect(() => {
     initializeSession();
@@ -33,6 +34,8 @@ export default function LearningSessionScreen() {
   useEffect(() => {
     if (currentSession) {
       loadCurrentWordDetails();
+      // Reset definition revealed state when moving to a new word
+      setDefinitionRevealed(false);
     }
   }, [currentSession?.currentIndex]);
 
@@ -44,6 +47,7 @@ export default function LearningSessionScreen() {
         listName as string,
         sessionSettings.wordCount,
         sessionSettings.order,
+        (mode as 'learn' | 'review') || 'learn',
         0
       );
     } catch (error) {
@@ -79,9 +83,32 @@ export default function LearningSessionScreen() {
       // Navigate to summary
       router.replace({
         pathname: '/(main)/session-summary',
-        params: { listName },
+        params: { listName, mode: currentSession.mode },
       });
     }
+  };
+
+  const handleComplete = async () => {
+    if (!currentSession) return;
+    
+    await completeWord();
+    await addGems(10);
+    
+    // Check if session is complete
+    if (currentSession.currentIndex + 1 >= currentSession.totalWords) {
+      // Update words learned count
+      await addWordsLearned(currentSession.results.knowIt + 1);
+      
+      // Navigate to summary
+      router.replace({
+        pathname: '/(main)/session-summary',
+        params: { listName, mode: currentSession.mode },
+      });
+    }
+  };
+
+  const handleGoBack = () => {
+    goToPreviousWord();
   };
 
   const handleEndSession = () => {
@@ -96,6 +123,7 @@ export default function LearningSessionScreen() {
       listName as string,
       newSettings.wordCount,
       newSettings.order,
+      (mode as 'learn' | 'review') || 'learn',
       0
     );
     setSettingsExpanded(false);
@@ -112,6 +140,8 @@ export default function LearningSessionScreen() {
   }
 
   const currentWord = getCurrentWord();
+  const isLearnMode = currentSession.mode === 'learn';
+  const isReviewMode = currentSession.mode === 'review';
   
   if (!currentWord) {
     return (
@@ -132,7 +162,7 @@ export default function LearningSessionScreen() {
         <TouchableOpacity onPress={handleEndSession}>
           <IconSymbol name="chevron.left" size={28} color={Colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>SESSION</Text>
+        <Text style={styles.headerTitle}>{isLearnMode ? 'LEARNING' : 'REVIEW'}</Text>
         <TouchableOpacity onPress={() => setSettingsExpanded(!settingsExpanded)}>
           <IconSymbol name="gearshape.fill" size={24} color={Colors.text} />
         </TouchableOpacity>
@@ -164,35 +194,58 @@ export default function LearningSessionScreen() {
           showBookmark={true}
           isBookmarked={isBookmarked}
           onBookmark={() => setIsBookmarked(!isBookmarked)}
+          hideDefinition={isReviewMode && !definitionRevealed}
+          onRevealDefinition={() => setDefinitionRevealed(true)}
         />
       </ScrollView>
 
       {/* Answer Buttons */}
-      <View style={styles.answerSection}>
-        <TouchableOpacity
-          style={[styles.answerButton, styles.answerButtonDontKnow]}
-          onPress={() => handleAnswer('dont_know')}
-        >
-          <Text style={styles.answerIcon}>✕</Text>
-          <Text style={styles.answerText}>DON'T KNOW</Text>
-        </TouchableOpacity>
+      {isLearnMode ? (
+        <View style={styles.answerSection}>
+          <TouchableOpacity
+            style={[styles.answerButton, styles.answerButtonGoBack]}
+            onPress={handleGoBack}
+            disabled={currentSession.currentIndex === 0}
+          >
+            <Text style={styles.answerIcon}>←</Text>
+            <Text style={styles.answerText}>GO BACK</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.answerButton, styles.answerButtonUnsure]}
-          onPress={() => handleAnswer('unsure')}
-        >
-          <Text style={styles.answerIcon}>?</Text>
-          <Text style={styles.answerText}>UNSURE</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.answerButton, styles.answerButtonComplete]}
+            onPress={handleComplete}
+          >
+            <Text style={styles.answerIcon}>✓</Text>
+            <Text style={styles.answerText}>COMPLETE</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.answerSection}>
+          <TouchableOpacity
+            style={[styles.answerButton, styles.answerButtonDontKnow]}
+            onPress={() => handleAnswer('dont_know')}
+          >
+            <Text style={styles.answerIcon}>✕</Text>
+            <Text style={styles.answerText}>DON'T KNOW</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.answerButton, styles.answerButtonKnowIt]}
-          onPress={() => handleAnswer('know_it')}
-        >
-          <Text style={styles.answerIcon}>★</Text>
-          <Text style={styles.answerText}>KNOW IT</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.answerButton, styles.answerButtonUnsure]}
+            onPress={() => handleAnswer('unsure')}
+          >
+            <Text style={styles.answerIcon}>?</Text>
+            <Text style={styles.answerText}>UNSURE</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.answerButton, styles.answerButtonKnowIt]}
+            onPress={() => handleAnswer('know_it')}
+          >
+            <Text style={styles.answerIcon}>★</Text>
+            <Text style={styles.answerText}>KNOW IT</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Next Session Setup (Expandable) */}
       {settingsExpanded && (
@@ -352,6 +405,12 @@ const styles = StyleSheet.create({
   },
   answerButtonKnowIt: {
     backgroundColor: 'rgba(37, 99, 235, 0.2)',
+  },
+  answerButtonComplete: {
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  answerButtonGoBack: {
+    backgroundColor: 'rgba(148, 163, 184, 0.2)',
   },
   answerIcon: {
     fontSize: 32,

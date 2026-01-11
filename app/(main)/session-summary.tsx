@@ -8,7 +8,7 @@ import { formatTime, getTimeElapsed } from '@/lib/utils';
 
 export default function SessionSummaryScreen() {
   const router = useRouter();
-  const { listName } = useLocalSearchParams<{ listName: string }>();
+  const { listName, mode } = useLocalSearchParams<{ listName: string; mode: string }>();
   const { currentSession, endSession } = useProgress();
 
   if (!currentSession) {
@@ -25,6 +25,8 @@ export default function SessionSummaryScreen() {
   const formattedTime = formatTime(timeTaken);
   const { dontKnow, unsure, knowIt } = currentSession.results;
   const totalWords = dontKnow + unsure + knowIt;
+  const isLearnMode = currentSession.mode === 'learn';
+  const isReviewMode = currentSession.mode === 'review';
 
   const handleContinue = () => {
     endSession();
@@ -35,7 +37,7 @@ export default function SessionSummaryScreen() {
     endSession();
     router.replace({
       pathname: '/(main)/learning-session',
-      params: { listName, mode: 'review' },
+      params: { listName, mode: isLearnMode ? 'review' : 'learn' },
     });
   };
 
@@ -48,7 +50,11 @@ export default function SessionSummaryScreen() {
 
       {/* Title */}
       <Text style={styles.title}>Session Complete!</Text>
-      <Text style={styles.subtitle}>Great job on completing your learning session</Text>
+      <Text style={styles.subtitle}>
+        {isLearnMode 
+          ? 'Great job on completing your learning session' 
+          : 'Great job on completing your review session'}
+      </Text>
 
       {/* Stats Card */}
       <Card style={styles.statsCard}>
@@ -59,7 +65,9 @@ export default function SessionSummaryScreen() {
         <View style={styles.divider} />
         
         <View style={styles.statRow}>
-          <Text style={styles.statLabel}>Words Reviewed</Text>
+          <Text style={styles.statLabel}>
+            {isLearnMode ? 'Words Learned' : 'Words Reviewed'}
+          </Text>
           <Text style={styles.statValue}>{totalWords}</Text>
         </View>
         <View style={styles.divider} />
@@ -71,33 +79,37 @@ export default function SessionSummaryScreen() {
       </Card>
 
       {/* Results Breakdown */}
-      <View style={styles.resultsSection}>
-        <Text style={styles.resultsTitle}>Results Breakdown</Text>
+      {isReviewMode && (
+        <View style={styles.resultsSection}>
+          <Text style={styles.resultsTitle}>Results Breakdown</Text>
 
-        <View style={styles.resultCards}>
-          <Card style={[styles.resultCard, styles.resultCardKnowIt]}>
-            <Text style={styles.resultIcon}>★</Text>
-            <Text style={styles.resultCount}>{knowIt}</Text>
-            <Text style={styles.resultLabel}>Know It</Text>
-          </Card>
+          <View style={styles.resultCards}>
+            <Card style={[styles.resultCard, styles.resultCardKnowIt]}>
+              <Text style={styles.resultIcon}>★</Text>
+              <Text style={styles.resultCount}>{knowIt}</Text>
+              <Text style={styles.resultLabel}>Know It</Text>
+            </Card>
 
-          <Card style={[styles.resultCard, styles.resultCardUnsure]}>
-            <Text style={styles.resultIcon}>?</Text>
-            <Text style={styles.resultCount}>{unsure}</Text>
-            <Text style={styles.resultLabel}>Unsure</Text>
-          </Card>
+            <Card style={[styles.resultCard, styles.resultCardUnsure]}>
+              <Text style={styles.resultIcon}>?</Text>
+              <Text style={styles.resultCount}>{unsure}</Text>
+              <Text style={styles.resultLabel}>Unsure</Text>
+            </Card>
 
-          <Card style={[styles.resultCard, styles.resultCardDontKnow]}>
-            <Text style={styles.resultIcon}>✕</Text>
-            <Text style={styles.resultCount}>{dontKnow}</Text>
-            <Text style={styles.resultLabel}>Don't Know</Text>
-          </Card>
+            <Card style={[styles.resultCard, styles.resultCardDontKnow]}>
+              <Text style={styles.resultIcon}>✕</Text>
+              <Text style={styles.resultCount}>{dontKnow}</Text>
+              <Text style={styles.resultLabel}>Don't Know</Text>
+            </Card>
+          </View>
         </View>
-      </View>
+      )}
 
       {/* Words We Learnt Today */}
       <Card style={styles.wordsCard}>
-        <Text style={styles.wordsTitle}>Words We Learnt Today</Text>
+        <Text style={styles.wordsTitle}>
+          {isLearnMode ? 'Words We Learned Today' : 'Words We Reviewed Today'}
+        </Text>
         <View style={styles.wordsList}>
           {currentSession.words.slice(0, totalWords).map((word, index) => (
             <View key={index} style={styles.wordItem}>
@@ -121,7 +133,7 @@ export default function SessionSummaryScreen() {
         />
 
         <Button
-          title="Review These Words Again"
+          title={isLearnMode ? 'Review These Words' : 'Learn These Words Again'}
           onPress={handleReviewWords}
           variant="secondary"
           size="medium"
