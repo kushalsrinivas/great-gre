@@ -5,6 +5,8 @@ import {
   saveLearningProgress,
   getVocabularyEntry,
   getTotalWordsLearned,
+  getAllLearningProgress,
+  getDatabase,
 } from '@/lib/storage/database';
 import { shuffleArray } from '@/lib/utils';
 
@@ -42,8 +44,30 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
     startIndex: number = 0
   ) => {
     try {
-      // Fetch words from the list
-      const allWords = await getWordsByListName(listName);
+      let allWords: Word[];
+      
+      if (mode === 'review') {
+        // For review mode, fetch only learned words (know_it mastery level)
+        const database = getDatabase();
+        const learnedProgress = await getAllLearningProgress();
+        const learnedWordIds = learnedProgress
+          .filter(p => p.masteryLevel === 'know_it')
+          .map(p => p.wordId);
+        
+        if (learnedWordIds.length === 0) {
+          throw new Error('No learned words available for review');
+        }
+        
+        // Fetch the actual word objects for learned words
+        const placeholders = learnedWordIds.map(() => '?').join(',');
+        allWords = await database.getAllAsync<Word>(
+          `SELECT * FROM words WHERE id IN (${placeholders})`,
+          learnedWordIds
+        );
+      } else {
+        // For learn mode, fetch words from the list
+        allWords = await getWordsByListName(listName);
+      }
       
       let selectedWords: Word[];
       

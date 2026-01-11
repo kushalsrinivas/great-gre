@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
@@ -10,6 +11,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function ListsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [lists, setLists] = useState<WordList[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,9 +42,13 @@ export default function ListsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.title}>Word Lists</Text>
         <TouchableOpacity>
           <IconSymbol name="magnifyingglass" size={24} color={Colors.text} />
@@ -181,8 +187,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: Spacing['2xl'],
-    paddingTop: 60,
+    paddingHorizontal: Spacing['2xl'],
+    paddingBottom: Spacing.lg,
   },
   title: {
     fontSize: Typography['4xl'],

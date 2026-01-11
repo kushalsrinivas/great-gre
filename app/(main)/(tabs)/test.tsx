@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +9,7 @@ import { getTotalWordsLearned, getTestAccuracy } from '@/lib/storage/database';
 
 export default function TestingCenterScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [wordsLearned, setWordsLearned] = useState(0);
   const [recentAccuracy, setRecentAccuracy] = useState(0);
 
@@ -23,7 +25,13 @@ export default function TestingCenterScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={[styles.content, { 
+        paddingTop: insets.top + 16,
+        paddingBottom: insets.bottom + 80 
+      }]}
+    >
       <Text style={styles.title}>Testing Center</Text>
 
       {/* Stats Cards */}
@@ -185,8 +193,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing['2xl'],
-    paddingTop: 80,
-    paddingBottom: Spacing['5xl'],
   },
   title: {
     fontSize: Typography['4xl'],

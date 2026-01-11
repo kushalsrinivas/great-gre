@@ -34,16 +34,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="lists"
+        name="stats"
         options={{
-          title: 'Lists',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="list.bullet" color={color} />,
+          title: 'Stats',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="chart.bar" color={color} />,
         }}
       />
       <Tabs.Screen
         name="test"
         options={{
-          title: 'Testing',
+          title: 'Test',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="clipboard.fill" color={color} />,
         }}
       />
@@ -51,14 +51,20 @@ export default function TabLayout() {
         name="review"
         options={{
           title: 'Review',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="book.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="arrow.clockwise" color={color} />,
+        }}
+      />
+      {/* Hidden tabs - accessible via navigation but not shown in tab bar */}
+      <Tabs.Screen
+        name="lists"
+        options={{
+          href: null, // This hides it from the tab bar
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="gearshape.fill" color={color} />,
+          href: null, // This hides it from the tab bar
         }}
       />
     </Tabs>

@@ -1,16 +1,73 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { useUser } from '@/contexts/UserContext';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { resetAllData } from '@/lib/storage/async-storage';
+import { getDatabase } from '@/lib/storage/database';
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { user } = useUser();
 
+  const handleResetProgress = () => {
+    Alert.alert(
+      'Reset All Progress',
+      'Are you sure you want to reset all your progress? This will delete all learned words, test scores, and statistics. This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Clear AsyncStorage data
+              await resetAllData();
+              
+              // Clear database learning progress and test scores
+              const database = getDatabase();
+              await database.execAsync(`
+                DELETE FROM learning_progress;
+                DELETE FROM test_scores;
+              `);
+              
+              Alert.alert(
+                'Success',
+                'All progress has been reset. The app will now restart.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      // Navigate to onboarding
+                      router.replace('/(auth)/onboarding');
+                    },
+                  },
+                ]
+              );
+            } catch (error) {
+              console.error('Error resetting progress:', error);
+              Alert.alert('Error', 'Failed to reset progress. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={[styles.content, { 
+        paddingTop: insets.top + 16,
+        paddingBottom: insets.bottom + 80 
+      }]}
+    >
       <Text style={styles.title}>Settings</Text>
 
       {/* Profile Section */}
@@ -85,7 +142,7 @@ export default function SettingsScreen() {
         </Card>
 
         <Card style={[styles.optionCard, styles.dangerCard]}>
-          <TouchableOpacity style={styles.option}>
+          <TouchableOpacity style={styles.option} onPress={handleResetProgress}>
             <View style={styles.optionLeft}>
               <Text style={styles.optionIcon}>⚠️</Text>
               <Text style={[styles.optionText, styles.dangerText]}>Reset All Progress</Text>
@@ -104,8 +161,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing['2xl'],
-    paddingTop: 80,
-    paddingBottom: Spacing['5xl'],
   },
   title: {
     fontSize: Typography['4xl'],
