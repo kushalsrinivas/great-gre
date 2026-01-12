@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
@@ -7,11 +7,51 @@ import { useUser } from '@/contexts/UserContext';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { resetAllData } from '@/lib/storage/async-storage';
 import { getDatabase } from '@/lib/storage/database';
+import { reimportWordLists } from '@/lib/storage/import-data';
+import { useState } from 'react';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user } = useUser();
+  const [isReimporting, setIsReimporting] = useState(false);
+
+  const handleRefreshWordData = () => {
+    Alert.alert(
+      'Refresh Word Data',
+      'This will reload all word lists and definitions from the source files. Your learning progress will be preserved. Continue?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Refresh',
+          onPress: async () => {
+            try {
+              setIsReimporting(true);
+              const success = await reimportWordLists();
+              setIsReimporting(false);
+              
+              if (success) {
+                Alert.alert(
+                  'Success',
+                  'Word data has been refreshed successfully!',
+                  [{ text: 'OK' }]
+                );
+              } else {
+                Alert.alert('Error', 'Failed to refresh word data. Please try again.');
+              }
+            } catch (error) {
+              console.error('Error refreshing word data:', error);
+              setIsReimporting(false);
+              Alert.alert('Error', 'Failed to refresh word data. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const handleResetProgress = () => {
     Alert.alert(
@@ -123,6 +163,27 @@ export default function SettingsScreen() {
             <View style={styles.optionRight}>
               <Text style={styles.optionValue}>Always On</Text>
             </View>
+          </TouchableOpacity>
+        </Card>
+      </View>
+
+      {/* Data Management Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Data Management</Text>
+        
+        <Card style={styles.optionCard}>
+          <TouchableOpacity 
+            style={styles.option} 
+            onPress={handleRefreshWordData}
+            disabled={isReimporting}
+          >
+            <View style={styles.optionLeft}>
+              <Text style={styles.optionIcon}>🔄</Text>
+              <Text style={styles.optionText}>Refresh Word Data</Text>
+            </View>
+            {isReimporting && (
+              <ActivityIndicator size="small" color={Colors.primary} />
+            )}
           </TouchableOpacity>
         </Card>
       </View>

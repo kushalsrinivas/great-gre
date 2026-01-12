@@ -83,7 +83,7 @@ export default function HomeScreen() {
 
       <Card style={styles.goalCard}>
         <View style={styles.goalHeader}>
-          <Text style={styles.goalLabel}>Today's Goal</Text>
+          <Text style={styles.goalLabel}>Today&apos;s Goal</Text>
           <Text style={styles.goalProgress}>
             {todayProgress}/{dailyGoal}
           </Text>
@@ -183,7 +183,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.actionCard}
-          onPress={() => router.push("/(main)/(tabs)/lists")}
+          onPress={() => router.push("/(main)/search")}
         >
           <View
             style={[

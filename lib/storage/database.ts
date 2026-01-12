@@ -251,9 +251,28 @@ export const getWordsByListName = async (
 
 export const searchWords = async (searchTerm: string): Promise<Word[]> => {
   const database = getDatabase();
+  
+  // If search term is empty, return a reasonable sample of words for fuzzy search
+  if (!searchTerm || searchTerm.trim() === '') {
+    const words = await database.getAllAsync<Word>(
+      'SELECT * FROM words ORDER BY word LIMIT 1000'
+    );
+    return words;
+  }
+  
+  // Get words that match the search term (case-insensitive)
   const words = await database.getAllAsync<Word>(
-    'SELECT * FROM words WHERE word LIKE ? LIMIT 50',
+    'SELECT * FROM words WHERE LOWER(word) LIKE LOWER(?) LIMIT 200',
     [`%${searchTerm}%`]
+  );
+  return words;
+};
+
+export const getAllWords = async (limit: number = 2000): Promise<Word[]> => {
+  const database = getDatabase();
+  const words = await database.getAllAsync<Word>(
+    'SELECT * FROM words ORDER BY word LIMIT ?',
+    [limit]
   );
   return words;
 };

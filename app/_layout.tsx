@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { UserProvider } from '@/contexts/UserContext';
 import { ProgressProvider } from '@/contexts/ProgressContext';
 import { initDatabase } from '@/lib/storage/database';
+import { importWordLists } from '@/lib/storage/import-data';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors } from '@/lib/constants/theme';
 
@@ -16,6 +17,8 @@ export default function RootLayout() {
   const initializeApp = async () => {
     try {
       await initDatabase();
+      // Import word lists on first launch
+      await importWordLists();
       setDbInitialized(true);
     } catch (error) {
       console.error('Error initializing app:', error);

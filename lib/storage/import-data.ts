@@ -44,15 +44,17 @@ const LIST_DESCRIPTIONS: { [key: string]: string } = {
   'High Frequency Words': 'Most commonly tested words',
 };
 
-export const importWordLists = async (): Promise<boolean> => {
+export const importWordLists = async (forceReimport: boolean = false): Promise<boolean> => {
   try {
     console.log('Starting word list import...');
     
-    // Check if data already exists
-    const existingLists = await getWordLists();
-    if (existingLists.length > 0) {
-      console.log('Word lists already imported');
-      return true;
+    // Check if data already exists (unless force re-import is requested)
+    if (!forceReimport) {
+      const existingLists = await getWordLists();
+      if (existingLists.length > 0) {
+        console.log('Word lists already imported');
+        return true;
+      }
     }
     
     // Load GRE word lists
@@ -150,3 +152,33 @@ export const checkDataImportStatus = async (): Promise<boolean> => {
   }
 };
 
+export const reimportWordLists = async (): Promise<boolean> => {
+  try {
+    console.log('Re-importing word lists...');
+    
+    // Get database instance
+    const { getDatabase } = await import('./database');
+    const db = getDatabase();
+    
+    // Clear existing word lists and words (but preserve user progress)
+    await db.execAsync(`
+      DELETE FROM words;
+      DELETE FROM word_lists;
+      DELETE FROM vocabulary;
+    `);
+    
+    console.log('Cleared existing word data');
+    
+    // Re-import with force flag
+    const success = await importWordLists(true);
+    
+    if (success) {
+      console.log('Word lists re-imported successfully');
+    }
+    
+    return success;
+  } catch (error) {
+    console.error('Error re-importing word lists:', error);
+    return false;
+  }
+};
