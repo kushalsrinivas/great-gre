@@ -1,30 +1,57 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { initializeUserProfile } from '@/lib/storage/async-storage';
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/lib/constants/theme";
+import { initializeUserProfile } from "@/lib/storage/async-storage";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function OnboardingScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [step, setStep] = useState(1);
-  const [name, setName] = useState('');
-  const [learningVibe, setLearningVibe] = useState<'chill' | 'intense'>('chill');
-  const [greMonth, setGreMonth] = useState('');
-  const [greYear, setGreYear] = useState('');
+  const [name, setName] = useState("");
+  const [learningVibe, setLearningVibe] = useState<"chill" | "intense">(
+    "chill"
+  );
+  const [greMonth, setGreMonth] = useState("");
+  const [greYear, setGreYear] = useState("");
   const [dailyGoal, setDailyGoal] = useState(10);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
-  const [validationError, setValidationError] = useState('');
+  const [validationError, setValidationError] = useState("");
 
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
-  
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
 
@@ -32,12 +59,12 @@ export default function OnboardingScreen() {
     // Validate step 3
     if (step === 3) {
       if (!name.trim()) {
-        setValidationError('Please enter your name');
+        setValidationError("Please enter your name");
         return;
       }
-      setValidationError('');
+      setValidationError("");
     }
-    
+
     if (step < 3) {
       setStep(step + 1);
     } else {
@@ -46,32 +73,36 @@ export default function OnboardingScreen() {
   };
 
   const handleComplete = async () => {
+    if (!name.trim()) {
+      // show error / toast / alert
+      Alert.alert("Missing name", "Please enter your name to continue");
+      return;
+    }
+
     try {
       // Format GRE test date if provided
-      const greTestDate = greMonth && greYear ? `${greMonth} ${greYear}` : undefined;
-      
+      const greTestDate =
+        greMonth && greYear ? `${greMonth} ${greYear}` : undefined;
+
       // Initialize user profile
       await initializeUserProfile(
-        name || 'Scholar',
+        name.trim(), // ✅ guaranteed non-empty
         new Date().toISOString(),
         dailyGoal,
         learningVibe,
         greTestDate
       );
-      
+
       // Navigate to main app
-      router.replace('/(main)/(tabs)');
+      router.replace("/(main)/(tabs)");
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      console.error("Error completing onboarding:", error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={handleComplete}
-      >
+      <TouchableOpacity style={styles.skipButton} onPress={handleComplete}>
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
 
@@ -85,7 +116,7 @@ export default function OnboardingScreen() {
               <Text style={styles.icon}>📴</Text>
             </View>
             <Text style={styles.heading}>
-              Study Anywhere,{'\n'}
+              Study Anywhere,{"\n"}
               <Text style={styles.headingBlue}>Anytime</Text>
             </Text>
             <Text style={styles.description}>
@@ -97,7 +128,7 @@ export default function OnboardingScreen() {
 
         {step === 2 && (
           <View style={styles.stepContainer}>
-            <Text style={styles.heading}>Choose Your{'\n'}Learning Vibe</Text>
+            <Text style={styles.heading}>Choose Your{"\n"}Learning Vibe</Text>
             <Text style={styles.description}>
               How would you like to pace your learning?
             </Text>
@@ -106,9 +137,9 @@ export default function OnboardingScreen() {
               <TouchableOpacity
                 style={[
                   styles.vibeOption,
-                  learningVibe === 'chill' && styles.vibeOptionSelected,
+                  learningVibe === "chill" && styles.vibeOptionSelected,
                 ]}
-                onPress={() => setLearningVibe('chill')}
+                onPress={() => setLearningVibe("chill")}
               >
                 <Text style={styles.vibeIcon}>😌</Text>
                 <Text style={styles.vibeTitle}>Chill Mode</Text>
@@ -118,9 +149,9 @@ export default function OnboardingScreen() {
               <TouchableOpacity
                 style={[
                   styles.vibeOption,
-                  learningVibe === 'intense' && styles.vibeOptionSelected,
+                  learningVibe === "intense" && styles.vibeOptionSelected,
                 ]}
-                onPress={() => setLearningVibe('intense')}
+                onPress={() => setLearningVibe("intense")}
               >
                 <Text style={styles.vibeIcon}>🔥</Text>
                 <Text style={styles.vibeTitle}>Intense Mode</Text>
@@ -132,7 +163,7 @@ export default function OnboardingScreen() {
 
         {step === 3 && (
           <View style={styles.stepContainer}>
-            <Text style={styles.heading}>Let's Get Started!</Text>
+            <Text style={styles.heading}>Lets Get Started!</Text>
             <Text style={styles.description}>
               Tell us a bit about yourself to personalize your experience.
             </Text>
@@ -171,27 +202,39 @@ export default function OnboardingScreen() {
               </View>
               <Text style={styles.helperText}>words per day</Text>
 
-              <Text style={styles.label}>When is your GRE test? (Optional)</Text>
+              <Text style={styles.label}>
+                When is your GRE test? (Optional)
+              </Text>
               <View style={styles.datePickerContainer}>
                 <TouchableOpacity
                   style={styles.datePickerButton}
                   onPress={() => setShowMonthPicker(true)}
                 >
-                  <Text style={[styles.datePickerText, !greMonth && styles.datePickerPlaceholder]}>
-                    {greMonth || 'Month'}
+                  <Text
+                    style={[
+                      styles.datePickerText,
+                      !greMonth && styles.datePickerPlaceholder,
+                    ]}
+                  >
+                    {greMonth || "Month"}
                   </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
                   style={styles.datePickerButton}
                   onPress={() => setShowYearPicker(true)}
                 >
-                  <Text style={[styles.datePickerText, !greYear && styles.datePickerPlaceholder]}>
-                    {greYear || 'Year'}
+                  <Text
+                    style={[
+                      styles.datePickerText,
+                      !greYear && styles.datePickerPlaceholder,
+                    ]}
+                  >
+                    {greYear || "Year"}
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {validationError ? (
                 <Text style={styles.errorText}>{validationError}</Text>
               ) : null}
@@ -201,7 +244,12 @@ export default function OnboardingScreen() {
       </ScrollView>
 
       {/* Progress indicator */}
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing['2xl']) }]}>
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: Math.max(insets.bottom, Spacing["2xl"]) },
+        ]}
+      >
         <View style={styles.progressDots}>
           {[1, 2, 3].map((dot) => (
             <View
@@ -215,7 +263,7 @@ export default function OnboardingScreen() {
         </View>
 
         <Button
-          title={step === 3 ? 'Get Started →' : 'Next'}
+          title={step === 3 ? "Get Started →" : "Next"}
           onPress={handleNext}
           size="large"
           style={styles.button}
@@ -248,7 +296,12 @@ export default function OnboardingScreen() {
                     setShowMonthPicker(false);
                   }}
                 >
-                  <Text style={[styles.pickerItemText, greMonth === item && styles.pickerItemSelected]}>
+                  <Text
+                    style={[
+                      styles.pickerItemText,
+                      greMonth === item && styles.pickerItemSelected,
+                    ]}
+                  >
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -284,7 +337,12 @@ export default function OnboardingScreen() {
                     setShowYearPicker(false);
                   }}
                 >
-                  <Text style={[styles.pickerItemText, greYear === item.toString() && styles.pickerItemSelected]}>
+                  <Text
+                    style={[
+                      styles.pickerItemText,
+                      greYear === item.toString() && styles.pickerItemSelected,
+                    ]}
+                  >
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -303,9 +361,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   skipButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
-    right: Spacing['2xl'],
+    right: Spacing["2xl"],
     zIndex: 10,
     padding: Spacing.sm,
   },
@@ -316,12 +374,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: Spacing['2xl'],
-    paddingVertical: Spacing['5xl'],
+    justifyContent: "center",
+    paddingHorizontal: Spacing["2xl"],
+    paddingVertical: Spacing["5xl"],
   },
   stepContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.xl,
   },
   iconContainer: {
@@ -329,18 +387,18 @@ const styles = StyleSheet.create({
     height: 120,
     backgroundColor: Colors.primary,
     borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: Spacing.xl,
   },
   icon: {
     fontSize: 60,
   },
   heading: {
-    fontSize: Typography['4xl'],
+    fontSize: Typography["4xl"],
     fontWeight: Typography.extrabold,
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 48,
   },
   headingBlue: {
@@ -349,12 +407,12 @@ const styles = StyleSheet.create({
   description: {
     fontSize: Typography.lg,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 28,
     paddingHorizontal: Spacing.xl,
   },
   vibeContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.lg,
     marginTop: Spacing.xl,
   },
@@ -363,9 +421,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardBackground,
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: "transparent",
   },
   vibeOptionSelected: {
     borderColor: Colors.primary,
@@ -383,10 +441,10 @@ const styles = StyleSheet.create({
   vibeDesc: {
     fontSize: Typography.sm,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   formCard: {
-    width: '100%',
+    width: "100%",
     marginTop: Spacing.xl,
   },
   label: {
@@ -404,7 +462,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   goalContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   goalOption: {
@@ -412,13 +470,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardBackgroundLight,
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: "transparent",
   },
   goalOptionSelected: {
     borderColor: Colors.primary,
-    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    backgroundColor: "rgba(37, 99, 235, 0.1)",
   },
   goalText: {
     fontSize: Typography.xl,
@@ -434,12 +492,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   footer: {
-    padding: Spacing['2xl'],
+    padding: Spacing["2xl"],
     gap: Spacing.xl,
   },
   progressDots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: Spacing.sm,
   },
   dot: {
@@ -454,10 +512,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardBackgroundLight,
   },
   button: {
-    width: '100%',
+    width: "100%",
   },
   datePickerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   datePickerButton: {
@@ -465,7 +523,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardBackgroundLight,
     borderRadius: BorderRadius.md,
     padding: Spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
   },
   datePickerText: {
     fontSize: Typography.base,
@@ -478,24 +536,24 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.sm,
-    color: '#EF4444',
+    color: "#EF4444",
     marginTop: Spacing.sm,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   pickerModal: {
     backgroundColor: Colors.cardBackground,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
-    maxHeight: '50%',
+    maxHeight: "50%",
   },
   pickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: Spacing.xl,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
@@ -524,4 +582,3 @@ const styles = StyleSheet.create({
     fontWeight: Typography.bold,
   },
 });
-

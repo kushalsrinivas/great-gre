@@ -100,10 +100,127 @@ export interface SessionSummary {
     unsure: number;
     knowIt: number;
   };
-  wordsReviewed: Array<{
+  wordsReviewed: {
     word: string;
     definition: string;
     masteryLevel: 'dont_know' | 'unsure' | 'know_it';
-  }>;
+  }[];
 }
 
+// Advanced Statistics Types
+export interface ForgettingRiskWord {
+  word: string;
+  wordId: number;
+  daysSinceReview: number;
+  riskLevel: 'high' | 'medium' | 'low';
+  lastReviewed: string;
+  masteryLevel: 'dont_know' | 'unsure' | 'know_it';
+}
+
+export interface RetentionHealth {
+  score: number; // 0-100
+  status: 'Excellent' | 'Good' | 'Fair' | 'Needs Work';
+  wordsReviewedLast7Days: number;
+  wordsReviewedLast14Days: number;
+  totalLearnedWords: number;
+}
+
+export interface LearningEfficiency {
+  reviewsPerLearnedWord: number;
+  masteryConversionFunnel: {
+    dontKnow: number;
+    unsure: number;
+    knowIt: number;
+  };
+  averageReviewsToMaster: number;
+}
+
+export interface GREReadiness {
+  score: number; // 0-100
+  status: 'Exam Ready' | 'On Track' | 'Needs Work' | 'Just Starting';
+  vocabularyCoverage: number; // percentage
+  retentionScore: number;
+  testAccuracy: number;
+  consistencyScore: number;
+}
+
+export interface WeaknessAnalysis {
+  hardestWords: {
+    word: string;
+    wordId: number;
+    reviewCount: number;
+    masteryLevel: 'dont_know' | 'unsure' | 'know_it';
+  }[];
+  weakLists: {
+    listName: string;
+    listId: number;
+    masteryPercentage: number;
+    totalWords: number;
+    learnedWords: number;
+  }[];
+  neglectedWords: {
+    word: string;
+    wordId: number;
+    daysSinceReview: number;
+    lastReviewed: string;
+  }[];
+}
+
+export interface ConsistencyMetrics {
+  score: number; // 0-100
+  activeDaysLast30: number;
+  streakStability: number;
+  bestLearningDays: {
+    day: string; // 'Monday', 'Tuesday', etc.
+    wordCount: number;
+    percentage: number;
+  }[];
+}
+
+export interface BookmarkEffectiveness {
+  totalBookmarked: number;
+  bookmarkedMastered: number;
+  effectivenessPercentage: number;
+  insight: string;
+}
+
+export interface ProgressQuality {
+  learningDepth: number; // review_count / mastered_words
+  speedVsStability: {
+    category: 'Fast & Stable' | 'Fast & Fragile' | 'Slow & Stable' | 'Slow & Fragile';
+    wordsPerDay: number;
+    retentionRate: number;
+  };
+}
+
+export interface MicroInsight {
+  title: string;
+  message: string;
+  type: 'positive' | 'neutral' | 'suggestion';
+  icon: string;
+}
+
+export interface AdvancedStats {
+  forgettingRisk: {
+    highRisk: ForgettingRiskWord[];
+    mediumRisk: ForgettingRiskWord[];
+    safeWords: number;
+  };
+  retentionHealth: RetentionHealth;
+  learningEfficiency: LearningEfficiency;
+  greReadiness: GREReadiness;
+  weaknessAnalysis: WeaknessAnalysis;
+  consistencyMetrics: ConsistencyMetrics;
+  bookmarkEffectiveness: BookmarkEffectiveness;
+  progressQuality: ProgressQuality;
+  microInsights: MicroInsight[];
+  accuracyVsTimeMetrics: {
+    recentTests: {
+      accuracy: number;
+      timeTaken: number; // in seconds
+      date: string;
+    }[];
+    trend: 'improving' | 'stable' | 'declining';
+    insight: string;
+  };
+}

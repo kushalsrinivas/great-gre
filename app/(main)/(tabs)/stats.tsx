@@ -8,6 +8,14 @@ import { StatCard } from '@/components/ui/StatCard';
 import { StreakCalendar } from '@/components/ui/StreakCalendar';
 import { MasteryChart } from '@/components/ui/MasteryChart';
 import { TestHistoryList } from '@/components/ui/TestHistoryList';
+import { ReadinessGauge } from '@/components/ui/ReadinessGauge';
+import { ForgettingRiskCard } from '@/components/ui/ForgettingRiskCard';
+import { RetentionHealthCard } from '@/components/ui/RetentionHealthCard';
+import { LearningEfficiencyCard } from '@/components/ui/LearningEfficiencyCard';
+import { WeaknessAnalysisCard } from '@/components/ui/WeaknessAnalysisCard';
+import { ConsistencyMetricsCard } from '@/components/ui/ConsistencyMetricsCard';
+import { ProgressQualityCard } from '@/components/ui/ProgressQualityCard';
+import { MicroInsightCard } from '@/components/ui/MicroInsightCard';
 import { useStats } from '@/lib/hooks/useStats';
 import { useState } from 'react';
 
@@ -32,6 +40,8 @@ export default function StatsScreen() {
     );
   }
 
+  const advancedStats = stats.advancedStats;
+
   return (
     <ScrollView
       style={styles.container}
@@ -51,8 +61,18 @@ export default function StatsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Your Progress</Text>
-        <Text style={styles.subtitle}>Track your learning journey</Text>
+        <Text style={styles.subtitle}>Advanced learning analytics</Text>
       </View>
+
+      {/* GRE Readiness - Flagship Feature */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <ReadinessGauge
+            score={advancedStats.greReadiness.score}
+            status={advancedStats.greReadiness.status}
+          />
+        </View>
+      )}
 
       {/* Key Stats Grid */}
       <View style={styles.statsGrid}>
@@ -90,6 +110,54 @@ export default function StatsScreen() {
         </View>
       </View>
 
+      {/* Micro Insights - Rotating "Did you know?" */}
+      {advancedStats && advancedStats.microInsights.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>💡 Insights</Text>
+          <View style={styles.insightsContainer}>
+            {advancedStats.microInsights.map((insight, index) => (
+              <MicroInsightCard key={index} insight={insight} />
+            ))}
+          </View>
+        </View>
+      )}
+
+      {/* Forgetting Risk - High Impact */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <ForgettingRiskCard
+            highRisk={advancedStats.forgettingRisk.highRisk}
+            mediumRisk={advancedStats.forgettingRisk.mediumRisk}
+            safeWords={advancedStats.forgettingRisk.safeWords}
+            onWordPress={(wordId) => {
+              // TODO: Navigate to word detail
+              console.log('Navigate to word:', wordId);
+            }}
+          />
+        </View>
+      )}
+
+      {/* Retention Health */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <RetentionHealthCard retentionHealth={advancedStats.retentionHealth} />
+        </View>
+      )}
+
+      {/* Learning Efficiency */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <LearningEfficiencyCard learningEfficiency={advancedStats.learningEfficiency} />
+        </View>
+      )}
+
+      {/* Progress Quality - Speed vs Stability */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <ProgressQualityCard progressQuality={advancedStats.progressQuality} />
+        </View>
+      )}
+
       {/* Mastery Overview */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Mastery Breakdown</Text>
@@ -99,6 +167,13 @@ export default function StatsScreen() {
           knowIt={stats.masteryBreakdown.knowIt}
         />
       </View>
+
+      {/* Consistency Metrics */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <ConsistencyMetricsCard consistencyMetrics={advancedStats.consistencyMetrics} />
+        </View>
+      )}
 
       {/* Streak Calendar */}
       <View style={styles.section}>
@@ -113,28 +188,89 @@ export default function StatsScreen() {
         <StreakCalendar streakDays={stats.streakDays} />
       </View>
 
-      {/* Learning Insights */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Learning Insights</Text>
-        <Card style={styles.insightsCard}>
-          <View style={styles.insightRow}>
-            <View style={styles.insightItem}>
-              <Text style={styles.insightLabel}>Total Reviews</Text>
-              <Text style={styles.insightValue}>{stats.totalReviews}</Text>
+      {/* Weakness Analysis */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <WeaknessAnalysisCard
+            weaknessAnalysis={advancedStats.weaknessAnalysis}
+            onWordPress={(wordId) => {
+              // TODO: Navigate to word detail
+              console.log('Navigate to word:', wordId);
+            }}
+          />
+        </View>
+      )}
+
+      {/* Vocabulary Coverage */}
+      {advancedStats && (
+        <View style={styles.section}>
+          <Card style={styles.coverageCard}>
+            <Text style={styles.cardTitle}>📖 Vocabulary Coverage</Text>
+            <View style={styles.coverageContent}>
+              <Text style={styles.coveragePercentage}>
+                {advancedStats.greReadiness.vocabularyCoverage}%
+              </Text>
+              <Text style={styles.coverageLabel}>
+                of GRE vocabulary covered
+              </Text>
             </View>
-            <View style={styles.insightDivider} />
-            <View style={styles.insightItem}>
-              <Text style={styles.insightLabel}>Days Active</Text>
-              <Text style={styles.insightValue}>{stats.daysActive}</Text>
+            <Text style={styles.coverageDescription}>
+              {advancedStats.greReadiness.vocabularyCoverage < 50
+                ? 'Keep learning! You\'re building a solid foundation.'
+                : advancedStats.greReadiness.vocabularyCoverage < 80
+                ? 'Good progress! You\'re covering a significant portion.'
+                : 'Excellent! You\'ve covered most of the GRE vocabulary.'}
+            </Text>
+          </Card>
+        </View>
+      )}
+
+      {/* Bookmark Effectiveness */}
+      {advancedStats && advancedStats.bookmarkEffectiveness.totalBookmarked > 0 && (
+        <View style={styles.section}>
+          <Card style={styles.bookmarkCard}>
+            <Text style={styles.cardTitle}>🔖 Bookmark Effectiveness</Text>
+            <View style={styles.bookmarkMetrics}>
+              <View style={styles.bookmarkMetric}>
+                <Text style={styles.bookmarkValue}>
+                  {advancedStats.bookmarkEffectiveness.effectivenessPercentage}%
+                </Text>
+                <Text style={styles.bookmarkLabel}>Success Rate</Text>
+              </View>
+              <View style={styles.metricDivider} />
+              <View style={styles.bookmarkMetric}>
+                <Text style={styles.bookmarkValue}>
+                  {advancedStats.bookmarkEffectiveness.bookmarkedMastered}/
+                  {advancedStats.bookmarkEffectiveness.totalBookmarked}
+                </Text>
+                <Text style={styles.bookmarkLabel}>Mastered</Text>
+              </View>
             </View>
-            <View style={styles.insightDivider} />
-            <View style={styles.insightItem}>
-              <Text style={styles.insightLabel}>Max Streak</Text>
-              <Text style={styles.insightValue}>{stats.maxStreak}</Text>
+            <Text style={styles.bookmarkInsight}>
+              {advancedStats.bookmarkEffectiveness.insight}
+            </Text>
+          </Card>
+        </View>
+      )}
+
+      {/* Accuracy vs Time Trend */}
+      {advancedStats && advancedStats.accuracyVsTimeMetrics.recentTests.length > 0 && (
+        <View style={styles.section}>
+          <Card style={styles.accuracyCard}>
+            <Text style={styles.cardTitle}>📈 Test Performance Trend</Text>
+            <View style={styles.trendBadge}>
+              <Text style={styles.trendText}>
+                {advancedStats.accuracyVsTimeMetrics.trend === 'improving' ? '📈 Improving' :
+                 advancedStats.accuracyVsTimeMetrics.trend === 'declining' ? '📉 Declining' :
+                 '➡️ Stable'}
+              </Text>
             </View>
-          </View>
-        </Card>
-      </View>
+            <Text style={styles.accuracyInsight}>
+              {advancedStats.accuracyVsTimeMetrics.insight}
+            </Text>
+          </Card>
+        </View>
+      )}
 
       {/* Test History */}
       <View style={styles.section}>
@@ -180,6 +316,29 @@ export default function StatsScreen() {
           </View>
         </View>
       )}
+
+      {/* Learning Insights Summary */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Learning Summary</Text>
+        <Card style={styles.insightsCard}>
+          <View style={styles.insightRow}>
+            <View style={styles.insightItem}>
+              <Text style={styles.insightLabel}>Total Reviews</Text>
+              <Text style={styles.insightValue}>{stats.totalReviews}</Text>
+            </View>
+            <View style={styles.insightDivider} />
+            <View style={styles.insightItem}>
+              <Text style={styles.insightLabel}>Days Active</Text>
+              <Text style={styles.insightValue}>{stats.daysActive}</Text>
+            </View>
+            <View style={styles.insightDivider} />
+            <View style={styles.insightItem}>
+              <Text style={styles.insightLabel}>Max Streak</Text>
+              <Text style={styles.insightValue}>{stats.maxStreak}</Text>
+            </View>
+          </View>
+        </Card>
+      </View>
 
       {/* Action Button */}
       <View style={styles.actionSection}>
@@ -263,6 +422,9 @@ const styles = StyleSheet.create({
     fontWeight: Typography.semibold,
     color: Colors.primary,
   },
+  insightsContainer: {
+    gap: Spacing.md,
+  },
   streakBadge: {
     backgroundColor: 'rgba(16, 185, 129, 0.2)',
     paddingHorizontal: Spacing.md,
@@ -301,6 +463,93 @@ const styles = StyleSheet.create({
     width: 1,
     height: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  coverageCard: {
+    padding: Spacing.lg,
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: Typography.xl,
+    fontWeight: Typography.bold,
+    color: Colors.text,
+    marginBottom: Spacing.lg,
+  },
+  coverageContent: {
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  coveragePercentage: {
+    fontSize: Typography['5xl'],
+    fontWeight: Typography.extrabold,
+    color: Colors.primary,
+  },
+  coverageLabel: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+  },
+  coverageDescription: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  bookmarkCard: {
+    padding: Spacing.lg,
+  },
+  bookmarkMetrics: {
+    flexDirection: 'row',
+    backgroundColor: Colors.cardBackgroundLight,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  bookmarkMetric: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  bookmarkValue: {
+    fontSize: Typography['2xl'],
+    fontWeight: Typography.bold,
+    color: Colors.text,
+    marginBottom: Spacing.xs,
+  },
+  bookmarkLabel: {
+    fontSize: Typography.xs,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  metricDivider: {
+    width: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    marginHorizontal: Spacing.sm,
+  },
+  bookmarkInsight: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  accuracyCard: {
+    padding: Spacing.lg,
+  },
+  trendBadge: {
+    backgroundColor: Colors.cardBackgroundLight,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  trendText: {
+    fontSize: Typography.base,
+    fontWeight: Typography.bold,
+    color: Colors.text,
+  },
+  accuracyInsight: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
   listsContainer: {
     gap: Spacing.sm,

@@ -7,7 +7,8 @@ import {
   getWordLists,
 } from '../storage/database';
 import { getStatistics, getUserProfile } from '../storage/async-storage';
-import { Statistics, TestScore, LearningProgress, WordList } from '../types';
+import { getAdvancedStatistics } from '../utils/advancedStats';
+import { Statistics, TestScore, LearningProgress, WordList, AdvancedStats } from '../types';
 
 export interface MasteryBreakdown {
   dontKnow: number;
@@ -28,6 +29,7 @@ export interface StatsData {
   learningVelocity: number; // words per day average
   totalReviews: number;
   daysActive: number;
+  advancedStats: AdvancedStats | null;
 }
 
 export const useStats = () => {
@@ -44,6 +46,7 @@ export const useStats = () => {
     learningVelocity: 0,
     totalReviews: 0,
     daysActive: 0,
+    advancedStats: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +65,7 @@ export const useStats = () => {
         statistics,
         userProfile,
         wordLists,
+        advancedStats,
       ] = await Promise.all([
         getTotalWordsLearned(),
         getAllLearningProgress(),
@@ -70,6 +74,7 @@ export const useStats = () => {
         getStatistics(),
         getUserProfile(),
         getWordLists(),
+        getAdvancedStatistics(),
       ]);
 
       // Calculate mastery breakdown
@@ -120,6 +125,7 @@ export const useStats = () => {
         learningVelocity,
         totalReviews,
         daysActive,
+        advancedStats,
       });
     } catch (err) {
       console.error('Error loading stats:', err);

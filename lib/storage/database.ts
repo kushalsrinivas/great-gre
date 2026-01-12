@@ -543,3 +543,248 @@ export const isWordBookmarked = async (wordId: number): Promise<boolean> => {
   );
   return result?.is_bookmarked === 1;
 };
+
+// Advanced Statistics Functions
+
+// Get words at risk of being forgotten
+export const getForgettingRiskWords = async (): Promise<any[]> => {
+  const database = getDatabase();
+  const now = new Date();
+  
+  const words = await database.getAllAsync<any>(
+    `SELECT lp.*, w.word 
+     FROM learning_progress lp
+     INNER JOIN words w ON lp.word_id = w.id
+     WHERE lp.mastery_level IN ('unsure', 'know_it')
+     ORDER BY lp.last_reviewed ASC`
+  );
+  
+  return words.map((word) => {
+    const lastReviewed = new Date(word.last_reviewed);
+    const daysSinceReview = Math.floor((now.getTime() - lastReviewed.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let riskLevel: 'high' | 'medium' | 'low' = 'low';
+    if (daysSinceReview >= 14) riskLevel = 'high';
+    else if (daysSinceReview >= 7) riskLevel = 'medium';
+    
+    return {
+      word: word.word,
+      wordId: word.word_id,
+      daysSinceReview,
+      riskLevel,
+      lastReviewed: word.last_reviewed,
+      masteryLevel: word.mastery_level,
+    };
+  });
+};
+
+// Get words reviewed in the last N days
+export const getWordsReviewedInLastNDays = async (days: number): Promise<number> => {
+  const database = getDatabase();
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  
+  const result = await database.getFirstAsync<{ count: number }>(
+    `SELECT COUNT(*) as count 
+     FROM learning_progress 
+     WHERE DATE(last_reviewed) >= DATE(?)`,
+    [cutoffDate.toISOString()]
+  );
+  
+  return result?.count ?? 0;
+};
+
+// Get hardest words (most reviews but not mastered)
+export const getHardestWords = async (limit: number = 10): Promise<any[]> => {
+  const database = getDatabase();
+  
+  const words = await database.getAllAsync<any>(
+    `SELECT lp.word_id as wordId, lp.word, lp.review_count as reviewCount, lp.mastery_level as masteryLevel
+     FROM learning_progress lp
+     WHERE lp.mastery_level != 'know_it'
+     ORDER BY lp.review_count DESC
+     LIMIT ?`,
+    [limit]
+  );
+  
+  return words;
+};
+
+// Get lists with lowest mastery percentage
+export const getWeakestLists = async (limit: number = 5): Promise<any[]> => {
+  const database = getDatabase();
+  
+  const lists = await database.getAllAsync<any>(
+    'SELECT id, name FROM word_lists'
+  );
+  
+  const listsWithProgress = await Promise.all(
+    lists.map(async (list) => {
+      const totalWords = await database.getFirstAsync<{ count: number }>(
+        'SELECT COUNT(*) as count FROM words WHERE list_id = ?',
+        [list.id]
+      );
+      
+      const learnedWords = await database.getFirstAsync<{ count: number }>(
+        `SELECT COUNT(DISTINCT lp.word_id) as count 
+         FROM learning_progress lp 
+         INNER JOIN words w ON lp.word_id = w.id 
+         WHERE w.list_id = ? AND lp.mastery_level = 'know_it'`,
+        [list.id]
+      );
+      
+      const total = totalWords?.count ?? 0;
+      const learned = learnedWords?.count ?? 0;
+      const masteryPercentage = total > 0 ? Math.round((learned / total) * 100) : 0;
+      
+      return {
+        listId: list.id,
+        listName: list.name,
+        totalWords: total,
+        learnedWords: learned,
+        masteryPercentage,
+      };
+    })
+  );
+  
+  return listsWithProgress
+    .filter(list => list.totalWords > 0)
+    .sort((a, b) => a.masteryPercentage - b.masteryPercentage)
+    .slice(0, limit);
+};
+
+// Get neglected words (learned but not reviewed in 21+ days)
+export const getNeglectedWords = async (limit: number = 20): Promise<any[]> => {
+  const database = getDatabase();
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - 21);
+  
+  const words = await database.getAllAsync<any>(
+    `SELECT lp.word_id as wordId, lp.word, lp.last_reviewed as lastReviewed
+     FROM learning_progress lp
+     WHERE lp.mastery_level = 'know_it' 
+     AND DATE(lp.last_reviewed) < DATE(?)
+     ORDER BY lp.last_reviewed ASC
+     LIMIT ?`,
+    [cutoffDate.toISOString(), limit]
+  );
+  
+  const now = new Date();
+  return words.map((word) => {
+    const lastReviewed = new Date(word.lastReviewed);
+    const daysSinceReview = Math.floor((now.getTime() - lastReviewed.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return {
+      ...word,
+      daysSinceReview,
+    };
+  });
+};
+
+// Get average reviews needed to master a word
+export const getAverageReviewsToMaster = async (): Promise<number> => {
+  const database = getDatabase();
+  
+  const result = await database.getFirstAsync<{ avgReviews: number }>(
+    `SELECT AVG(review_count) as avgReviews
+     FROM learning_progress
+     WHERE mastery_level = 'know_it'`
+  );
+  
+  return Math.round(result?.avgReviews ?? 0);
+};
+
+// Get learning activity by day of week
+export const getLearningActivityByDay = async (): Promise<any[]> => {
+  const database = getDatabase();
+  
+  const activities = await database.getAllAsync<any>(
+    `SELECT last_reviewed FROM learning_progress`
+  );
+  
+  const dayCount: { [key: string]: number } = {
+    Sunday: 0,
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+  };
+  
+  activities.forEach((activity) => {
+    const date = new Date(activity.last_reviewed);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    dayCount[dayName] = (dayCount[dayName] || 0) + 1;
+  });
+  
+  const total = Object.values(dayCount).reduce((sum, count) => sum + count, 0);
+  
+  return Object.entries(dayCount).map(([day, count]) => ({
+    day,
+    wordCount: count,
+    percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+  })).sort((a, b) => b.wordCount - a.wordCount);
+};
+
+// Get bookmark effectiveness metrics
+export const getBookmarkEffectiveness = async (): Promise<any> => {
+  const database = getDatabase();
+  
+  const totalBookmarked = await database.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) as count FROM learning_progress WHERE is_bookmarked = 1'
+  );
+  
+  const bookmarkedMastered = await database.getFirstAsync<{ count: number }>(
+    `SELECT COUNT(*) as count FROM learning_progress 
+     WHERE is_bookmarked = 1 AND mastery_level = 'know_it'`
+  );
+  
+  const total = totalBookmarked?.count ?? 0;
+  const mastered = bookmarkedMastered?.count ?? 0;
+  
+  const effectivenessPercentage = total > 0 ? Math.round((mastered / total) * 100) : 0;
+  
+  let insight = '';
+  if (effectivenessPercentage >= 60) {
+    insight = 'Bookmarked words are mastered faster! Your bookmarking strategy is working well.';
+  } else if (effectivenessPercentage >= 30) {
+    insight = 'Bookmarks are moderately effective. Try reviewing bookmarked words more frequently.';
+  } else if (total > 0) {
+    insight = 'Bookmarks need more attention. Consider reviewing them in dedicated sessions.';
+  } else {
+    insight = 'Start bookmarking challenging words to track them more effectively.';
+  }
+  
+  return {
+    totalBookmarked: total,
+    bookmarkedMastered: mastered,
+    effectivenessPercentage,
+    insight,
+  };
+};
+
+// Get active days in last N days
+export const getActiveDaysInLastNDays = async (days: number = 30): Promise<number> => {
+  const database = getDatabase();
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  
+  const result = await database.getFirstAsync<{ count: number }>(
+    `SELECT COUNT(DISTINCT DATE(last_reviewed)) as count
+     FROM learning_progress
+     WHERE DATE(last_reviewed) >= DATE(?)`,
+    [cutoffDate.toISOString()]
+  );
+  
+  return result?.count ?? 0;
+};
+
+// Get total words available across all lists
+export const getTotalWordsAvailable = async (): Promise<number> => {
+  const database = getDatabase();
+  const result = await database.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) as count FROM words'
+  );
+  return result?.count ?? 0;
+};
