@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { RetentionHealth } from '@/lib/types';
 import { ProgressBar } from './ProgressBar';
 
@@ -21,16 +22,16 @@ export const RetentionHealthCard = ({ retentionHealth }: RetentionHealthCardProp
     }
   };
 
-  const getStatusEmoji = () => {
+  const getStatusIcon = () => {
     switch (retentionHealth.status) {
       case 'Excellent':
-        return '🌟';
+        return 'star.fill';
       case 'Good':
-        return '👍';
+        return 'hand.thumbsup.fill';
       case 'Fair':
-        return '📈';
+        return 'chart.line.uptrend.xyaxis';
       case 'Needs Work':
-        return '⚠️';
+        return 'exclamationmark.triangle.fill';
     }
   };
 
@@ -39,8 +40,9 @@ export const RetentionHealthCard = ({ retentionHealth }: RetentionHealthCardProp
       <View style={styles.header}>
         <Text style={styles.title}>Retention Health</Text>
         <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor()}20` }]}>
+          <IconSymbol name={getStatusIcon()} size={14} color={getStatusColor()} />
           <Text style={[styles.statusText, { color: getStatusColor() }]}>
-            {getStatusEmoji()} {retentionHealth.status}
+            {retentionHealth.status}
           </Text>
         </View>
       </View>
@@ -103,6 +105,9 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,

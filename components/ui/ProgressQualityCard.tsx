@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { ProgressQuality } from '@/lib/types';
 
 interface ProgressQualityCardProps {
@@ -22,16 +23,16 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
     }
   };
 
-  const getCategoryEmoji = () => {
+  const getCategoryIcon = () => {
     switch (speedVsStability.category) {
       case 'Fast & Stable':
-        return '🚀';
+        return 'bolt.fill';
       case 'Slow & Stable':
-        return '🧠';
+        return 'brain.head.profile';
       case 'Fast & Fragile':
-        return '⚠️';
+        return 'exclamationmark.triangle.fill';
       case 'Slow & Fragile':
-        return '🐌';
+        return 'tortoise.fill';
     }
   };
 
@@ -61,7 +62,7 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
           { backgroundColor: `${getCategoryColor()}20`, borderColor: getCategoryColor() },
         ]}
       >
-        <Text style={styles.categoryEmoji}>{getCategoryEmoji()}</Text>
+        <IconSymbol name={getCategoryIcon()} size={32} color={getCategoryColor()} />
         <Text style={[styles.categoryText, { color: getCategoryColor() }]}>
           {speedVsStability.category}
         </Text>
@@ -101,7 +102,7 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
                 speedVsStability.category === 'Fast & Stable' && styles.activeCell,
               ]}
             >
-              <Text style={styles.quadrantEmoji}>🚀</Text>
+              <IconSymbol name="bolt.fill" size={24} color={Colors.textSecondary} />
               <Text style={styles.quadrantLabel}>Fast & Stable</Text>
             </View>
             <View
@@ -110,7 +111,7 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
                 speedVsStability.category === 'Fast & Fragile' && styles.activeCell,
               ]}
             >
-              <Text style={styles.quadrantEmoji}>⚠️</Text>
+              <IconSymbol name="exclamationmark.triangle.fill" size={24} color={Colors.textSecondary} />
               <Text style={styles.quadrantLabel}>Fast & Fragile</Text>
             </View>
           </View>
@@ -121,7 +122,7 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
                 speedVsStability.category === 'Slow & Stable' && styles.activeCell,
               ]}
             >
-              <Text style={styles.quadrantEmoji}>🧠</Text>
+              <IconSymbol name="brain.head.profile" size={24} color={Colors.textSecondary} />
               <Text style={styles.quadrantLabel}>Slow & Stable</Text>
             </View>
             <View
@@ -130,7 +131,7 @@ export const ProgressQualityCard = ({ progressQuality }: ProgressQualityCardProp
                 speedVsStability.category === 'Slow & Fragile' && styles.activeCell,
               ]}
             >
-              <Text style={styles.quadrantEmoji}>🐌</Text>
+              <IconSymbol name="tortoise.fill" size={24} color={Colors.textSecondary} />
               <Text style={styles.quadrantLabel}>Slow & Fragile</Text>
             </View>
           </View>
@@ -168,9 +169,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     gap: Spacing.md,
     marginBottom: Spacing.md,
-  },
-  categoryEmoji: {
-    fontSize: 32,
   },
   categoryText: {
     fontSize: Typography.xl,
@@ -233,16 +231,13 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
+    gap: Spacing.xs,
     opacity: 0.5,
   },
   activeCell: {
     opacity: 1,
     borderWidth: 2,
     borderColor: Colors.primary,
-  },
-  quadrantEmoji: {
-    fontSize: 24,
-    marginBottom: Spacing.xs,
   },
   quadrantLabel: {
     fontSize: Typography.xs,

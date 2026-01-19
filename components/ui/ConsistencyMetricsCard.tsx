@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { ConsistencyMetrics } from '@/lib/types';
 import { ProgressBar } from './ProgressBar';
 
@@ -39,7 +40,7 @@ export const ConsistencyMetricsCard = ({
         <Text style={styles.scoreLabel}>{getScoreStatus()}</Text>
       </View>
 
-      <ProgressBar progress={consistencyMetrics.score} color={getScoreColor()} height={8} />
+      <ProgressBar progress={consistencyMetrics.score} progressColor={getScoreColor()} height={8} />
 
       {/* Metrics */}
       <View style={styles.metrics}>
@@ -61,7 +62,10 @@ export const ConsistencyMetricsCard = ({
       {/* Best Learning Days */}
       {consistencyMetrics.bestLearningDays.length > 0 && (
         <View style={styles.daysSection}>
-          <Text style={styles.sectionTitle}>📊 Your Best Learning Days</Text>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="chart.bar.fill" size={16} color={Colors.primary} />
+            <Text style={styles.sectionTitle}>Your Best Learning Days</Text>
+          </View>
           <View style={styles.daysList}>
             {consistencyMetrics.bestLearningDays.map((day, index) => (
               <View key={day.day} style={styles.dayItem}>
@@ -78,15 +82,21 @@ export const ConsistencyMetricsCard = ({
               </View>
             ))}
           </View>
-          <Text style={styles.dayTip}>
-            💡 Schedule learning sessions on these days for better results
-          </Text>
+          <View style={styles.dayTipContainer}>
+            <IconSymbol name="lightbulb.fill" size={14} color={Colors.warning} />
+            <Text style={styles.dayTip}>
+              Schedule learning sessions on these days for better results
+            </Text>
+          </View>
         </View>
       )}
 
       {/* Consistency Tips */}
       <View style={styles.tipsBox}>
-        <Text style={styles.tipsTitle}>💪 Consistency Tips</Text>
+        <View style={styles.tipsTitleContainer}>
+          <IconSymbol name="dumbbell.fill" size={16} color={Colors.primary} />
+          <Text style={styles.tipsTitle}>Consistency Tips</Text>
+        </View>
         <Text style={styles.tipsText}>
           {consistencyMetrics.score < 50
             ? 'Set a daily reminder and start with just 5-10 minutes per day'
@@ -162,11 +172,16 @@ const styles = StyleSheet.create({
   daysSection: {
     marginBottom: Spacing.lg,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginBottom: Spacing.md,
+  },
   sectionTitle: {
     fontSize: Typography.base,
     fontWeight: Typography.bold,
     color: Colors.text,
-    marginBottom: Spacing.md,
   },
   daysList: {
     gap: Spacing.sm,
@@ -214,7 +229,13 @@ const styles = StyleSheet.create({
     fontSize: Typography.sm,
     color: Colors.primary,
   },
+  dayTipContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.xs,
+  },
   dayTip: {
+    flex: 1,
     fontSize: Typography.sm,
     color: Colors.textSecondary,
     fontStyle: 'italic',
@@ -226,11 +247,16 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: Colors.primary,
   },
+  tipsTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
   tipsTitle: {
     fontSize: Typography.base,
     fontWeight: Typography.bold,
     color: Colors.text,
-    marginBottom: Spacing.xs,
   },
   tipsText: {
     fontSize: Typography.sm,

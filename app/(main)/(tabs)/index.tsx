@@ -63,18 +63,18 @@ export default function HomeScreen() {
       </View>
 
       {/* Greeting */}
-      <Text style={styles.greeting}>Hello, Scholar 👋</Text>
+      <Text style={styles.greeting}>Hello, Scholar</Text>
 
       {/* Stats Badges */}
       <View style={styles.badgesContainer}>
         <Badge
           text={`${streak} Day Streak`}
-          icon={<Text style={styles.badgeIcon}>🔥</Text>}
+          icon={<IconSymbol name="flame.fill" size={20} color={Colors.warning} />}
           variant="streak"
         />
         <Badge
           text={`${gems} Gems`}
-          icon={<Text style={styles.badgeIcon}>💎</Text>}
+          icon={<IconSymbol name="diamond.fill" size={20} color={Colors.primary} />}
           variant="gems"
         />
       </View>
@@ -104,7 +104,7 @@ export default function HomeScreen() {
       >
         <View style={styles.primaryCardContent}>
           <View style={styles.primaryCardIcon}>
-            <Text style={styles.primaryIconText}>🎓</Text>
+            <IconSymbol name="graduationcap.fill" size={32} color={Colors.text} />
           </View>
           <View style={styles.primaryCardText}>
             <View style={styles.startBadge}>
@@ -125,7 +125,7 @@ export default function HomeScreen() {
           variant="secondary"
           size="large"
           style={styles.reviewButton}
-          icon={<Text style={styles.reviewIcon}>🔄</Text>}
+          icon={<IconSymbol name="arrow.clockwise" size={20} color={Colors.text} />}
         />
       </View>
 
@@ -141,7 +141,7 @@ export default function HomeScreen() {
               { backgroundColor: "rgba(16, 185, 129, 0.2)" },
             ]}
           >
-            <Text style={styles.actionIconText}>📋</Text>
+            <IconSymbol name="list.clipboard.fill" size={24} color={Colors.success} />
           </View>
           <Text style={styles.actionTitle}>Take Test</Text>
           <Text style={styles.actionSubtitle}>Test your skills</Text>
@@ -157,7 +157,7 @@ export default function HomeScreen() {
               { backgroundColor: "rgba(168, 85, 247, 0.2)" },
             ]}
           >
-            <Text style={styles.actionIconText}>📊</Text>
+            <IconSymbol name="chart.bar.fill" size={24} color="#A855F7" />
           </View>
           <Text style={styles.actionTitle}>Progress</Text>
           <Text style={styles.actionSubtitle}>Check your stats</Text>
@@ -175,7 +175,7 @@ export default function HomeScreen() {
               { backgroundColor: "rgba(245, 158, 11, 0.2)" },
             ]}
           >
-            <Text style={styles.actionIconText}>📚</Text>
+            <IconSymbol name="books.vertical.fill" size={24} color={Colors.warning} />
           </View>
           <Text style={styles.actionTitle}>Word Lists</Text>
           <Text style={styles.actionSubtitle}>Browse collections</Text>
@@ -191,7 +191,7 @@ export default function HomeScreen() {
               { backgroundColor: "rgba(236, 72, 153, 0.2)" },
             ]}
           >
-            <Text style={styles.actionIconText}>🔍</Text>
+            <IconSymbol name="magnifyingglass" size={24} color="#EC4899" />
           </View>
           <Text style={styles.actionTitle}>Search</Text>
           <Text style={styles.actionSubtitle}>Find a word</Text>
@@ -280,9 +280,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing["2xl"],
     marginBottom: Spacing.xl,
   },
-  badgeIcon: {
-    fontSize: 20,
-  },
   goalCard: {
     marginHorizontal: Spacing["2xl"],
     marginBottom: Spacing.xl,
@@ -337,9 +334,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  primaryIconText: {
-    fontSize: 32,
-  },
   primaryCardText: {
     flex: 1,
   },
@@ -387,9 +381,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.md,
   },
-  actionIconText: {
-    fontSize: 24,
-  },
   actionTitle: {
     fontSize: Typography.lg,
     fontWeight: Typography.bold,
@@ -433,8 +424,5 @@ const styles = StyleSheet.create({
   },
   reviewButton: {
     width: "100%",
-  },
-  reviewIcon: {
-    fontSize: 20,
   },
 });

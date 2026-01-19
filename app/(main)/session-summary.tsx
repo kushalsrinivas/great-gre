@@ -3,6 +3,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useProgress } from '@/contexts/ProgressContext';
 import { formatTime, getTimeElapsed } from '@/lib/utils';
 
@@ -45,7 +46,7 @@ export default function SessionSummaryScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Success Icon */}
       <View style={styles.iconContainer}>
-        <Text style={styles.icon}>🎉</Text>
+        <IconSymbol name="party.popper.fill" size={80} color={Colors.success} />
       </View>
 
       {/* Title */}
@@ -166,9 +167,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     marginBottom: Spacing.xl,
-  },
-  icon: {
-    fontSize: 80,
   },
   title: {
     fontSize: Typography['4xl'],

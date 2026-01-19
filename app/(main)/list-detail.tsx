@@ -140,26 +140,28 @@ export default function ListDetailScreen() {
 
           <View style={styles.secondaryButtons}>
             <Button
-              title="🔄 Review Learned"
+              title="Review Learned"
               onPress={handleReviewLearned}
               variant="secondary"
               size="medium"
               style={styles.secondaryButton}
+              icon={<IconSymbol name="arrow.clockwise" size={16} color={Colors.text} />}
             />
 
             <Button
-              title="🎴 Flashcards"
+              title="Flashcards"
               onPress={() => {}}
               variant="secondary"
               size="medium"
               style={styles.secondaryButton}
+              icon={<IconSymbol name="rectangle.stack.fill" size={16} color={Colors.text} />}
             />
           </View>
         </View>
 
         {/* Reset Progress */}
         <TouchableOpacity style={styles.resetButton}>
-          <Text style={styles.resetIcon}>🗑️</Text>
+          <IconSymbol name="trash.fill" size={20} color={Colors.danger} />
           <Text style={styles.resetText}>Reset Progress</Text>
         </TouchableOpacity>
       </View>
@@ -282,9 +284,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: Spacing.lg,
     gap: Spacing.sm,
-  },
-  resetIcon: {
-    fontSize: 20,
   },
   resetText: {
     fontSize: Typography.base,

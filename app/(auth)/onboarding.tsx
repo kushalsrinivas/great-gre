@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import {
   BorderRadius,
   Colors,
@@ -113,7 +114,7 @@ export default function OnboardingScreen() {
         {step === 1 && (
           <View style={styles.stepContainer}>
             <View style={styles.iconContainer}>
-              <Text style={styles.icon}>📴</Text>
+              <IconSymbol name="wifi.slash" size={60} color={Colors.text} />
             </View>
             <Text style={styles.heading}>
               Study Anywhere,{"\n"}
@@ -141,7 +142,7 @@ export default function OnboardingScreen() {
                 ]}
                 onPress={() => setLearningVibe("chill")}
               >
-                <Text style={styles.vibeIcon}>😌</Text>
+                <IconSymbol name="cloud.fill" size={48} color={Colors.primary} />
                 <Text style={styles.vibeTitle}>Chill Mode</Text>
                 <Text style={styles.vibeDesc}>Learn at your own pace</Text>
               </TouchableOpacity>
@@ -153,7 +154,7 @@ export default function OnboardingScreen() {
                 ]}
                 onPress={() => setLearningVibe("intense")}
               >
-                <Text style={styles.vibeIcon}>🔥</Text>
+                <IconSymbol name="flame.fill" size={48} color={Colors.warning} />
                 <Text style={styles.vibeTitle}>Intense Mode</Text>
                 <Text style={styles.vibeDesc}>Fast-track your learning</Text>
               </TouchableOpacity>
@@ -391,9 +392,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.xl,
   },
-  icon: {
-    fontSize: 60,
-  },
   heading: {
     fontSize: Typography["4xl"],
     fontWeight: Typography.extrabold,
@@ -422,15 +420,12 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
     alignItems: "center",
+    gap: Spacing.md,
     borderWidth: 2,
     borderColor: "transparent",
   },
   vibeOptionSelected: {
     borderColor: Colors.primary,
-  },
-  vibeIcon: {
-    fontSize: 48,
-    marginBottom: Spacing.md,
   },
   vibeTitle: {
     fontSize: Typography.lg,

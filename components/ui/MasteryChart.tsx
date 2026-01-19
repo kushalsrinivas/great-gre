@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 
 interface MasteryChartProps {
   dontKnow: number;
@@ -24,21 +25,21 @@ export const MasteryChart = ({ dontKnow, unsure, knowIt }: MasteryChartProps) =>
       value: dontKnow,
       percentage: dontKnowPercent,
       color: Colors.danger,
-      icon: '❌',
+      icon: 'xmark.circle.fill',
     },
     {
       label: 'Unsure',
       value: unsure,
       percentage: unsurePercent,
       color: '#F59E0B',
-      icon: '⚠️',
+      icon: 'questionmark.circle.fill',
     },
     {
       label: 'Know It',
       value: knowIt,
       percentage: knowItPercent,
       color: Colors.success,
-      icon: '✅',
+      icon: 'checkmark.circle.fill',
     },
   ];
 
@@ -77,7 +78,7 @@ export const MasteryChart = ({ dontKnow, unsure, knowIt }: MasteryChartProps) =>
         {masteryLevels.map((level, index) => (
           <View key={index} style={styles.legendItem}>
             <View style={styles.legendLeft}>
-              <Text style={styles.legendIcon}>{level.icon}</Text>
+              <IconSymbol name={level.icon} size={20} color={level.color} />
               <Text style={styles.legendLabel}>{level.label}</Text>
             </View>
             <View style={styles.legendRight}>
@@ -130,9 +131,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-  },
-  legendIcon: {
-    fontSize: 20,
   },
   legendLabel: {
     fontSize: Typography.base,

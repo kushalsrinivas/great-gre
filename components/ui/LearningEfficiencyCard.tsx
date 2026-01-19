@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { LearningEfficiency } from '@/lib/types';
 import { ProgressBar } from './ProgressBar';
 
@@ -34,13 +35,24 @@ export const LearningEfficiencyCard = ({
           {learningEfficiency.reviewsPerLearnedWord}
           <Text style={styles.metricUnit}> reviews/word</Text>
         </Text>
-        <Text style={styles.metricDescription}>
-          {learningEfficiency.reviewsPerLearnedWord <= 3
-            ? '⚡ Excellent! You master words quickly'
-            : learningEfficiency.reviewsPerLearnedWord <= 5
-            ? '👍 Good efficiency'
-            : '🧠 You prefer deep learning—great for retention'}
-        </Text>
+        <View style={styles.metricDescriptionContainer}>
+          <IconSymbol 
+            name={learningEfficiency.reviewsPerLearnedWord <= 3 ? 'bolt.fill' :
+                  learningEfficiency.reviewsPerLearnedWord <= 5 ? 'hand.thumbsup.fill' :
+                  'brain.head.profile'}
+            size={16}
+            color={learningEfficiency.reviewsPerLearnedWord <= 3 ? Colors.warning :
+                   learningEfficiency.reviewsPerLearnedWord <= 5 ? Colors.success :
+                   Colors.primary}
+          />
+          <Text style={styles.metricDescription}>
+            {learningEfficiency.reviewsPerLearnedWord <= 3
+              ? 'Excellent! You master words quickly'
+              : learningEfficiency.reviewsPerLearnedWord <= 5
+              ? 'Good efficiency'
+              : 'You prefer deep learning—great for retention'}
+          </Text>
+        </View>
       </View>
 
       {/* Mastery Conversion Funnel */}
@@ -52,7 +64,10 @@ export const LearningEfficiencyCard = ({
 
         <View style={styles.funnelItem}>
           <View style={styles.funnelHeader}>
-            <Text style={styles.funnelLabel}>🔴 Don't Know</Text>
+            <View style={styles.funnelLabelContainer}>
+              <IconSymbol name="circle.fill" size={12} color={Colors.danger} />
+              <Text style={styles.funnelLabel}>Don't Know</Text>
+            </View>
             <Text style={styles.funnelCount}>
               {masteryConversionFunnel.dontKnow} words
             </Text>
@@ -62,7 +77,10 @@ export const LearningEfficiencyCard = ({
 
         <View style={styles.funnelItem}>
           <View style={styles.funnelHeader}>
-            <Text style={styles.funnelLabel}>🟡 Unsure</Text>
+            <View style={styles.funnelLabelContainer}>
+              <IconSymbol name="circle.fill" size={12} color={Colors.warning} />
+              <Text style={styles.funnelLabel}>Unsure</Text>
+            </View>
             <Text style={styles.funnelCount}>
               {masteryConversionFunnel.unsure} words
             </Text>
@@ -72,7 +90,10 @@ export const LearningEfficiencyCard = ({
 
         <View style={styles.funnelItem}>
           <View style={styles.funnelHeader}>
-            <Text style={styles.funnelLabel}>🟢 Know It</Text>
+            <View style={styles.funnelLabelContainer}>
+              <IconSymbol name="circle.fill" size={12} color={Colors.success} />
+              <Text style={styles.funnelLabel}>Know It</Text>
+            </View>
             <Text style={styles.funnelCount}>
               {masteryConversionFunnel.knowIt} words
             </Text>
@@ -84,8 +105,9 @@ export const LearningEfficiencyCard = ({
       {/* Insight */}
       {unsurePercent > 50 && (
         <View style={styles.insightBox}>
+          <IconSymbol name="lightbulb.fill" size={16} color={Colors.warning} />
           <Text style={styles.insightText}>
-            💡 Most words are in "Unsure" stage. Focus on deep revision to move them to
+            Most words are in "Unsure" stage. Focus on deep revision to move them to
             "Know It"!
           </Text>
         </View>
@@ -135,6 +157,12 @@ const styles = StyleSheet.create({
     fontSize: Typography.base,
     color: Colors.textSecondary,
   },
+  metricDescriptionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    justifyContent: 'center',
+  },
   metricDescription: {
     fontSize: Typography.sm,
     color: Colors.textSecondary,
@@ -163,6 +191,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.sm,
   },
+  funnelLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
   funnelLabel: {
     fontSize: Typography.base,
     fontWeight: Typography.semibold,
@@ -174,6 +207,9 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   insightBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
     backgroundColor: 'rgba(59, 130, 246, 0.1)',
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
@@ -181,6 +217,7 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.primary,
   },
   insightText: {
+    flex: 1,
     fontSize: Typography.sm,
     color: Colors.text,
     lineHeight: 20,

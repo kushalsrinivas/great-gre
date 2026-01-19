@@ -12,6 +12,7 @@ import { useUser } from '@/contexts/UserContext';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { getVocabularyEntry, isWordBookmarked, toggleBookmark } from '@/lib/storage/database';
 import { VocabularyEntry } from '@/lib/types';
+import { updateLastSessionTime, scheduleDailyReminder } from '@/lib/services/notifications';
 
 export default function LearningSessionScreen() {
   const router = useRouter();
@@ -93,6 +94,10 @@ export default function LearningSessionScreen() {
     if (currentSession.currentIndex + 1 >= currentSession.totalWords) {
       // Update words learned count
       await addWordsLearned(currentSession.results.knowIt + 1);
+      
+      // Update last session time and schedule next reminder
+      await updateLastSessionTime();
+      await scheduleDailyReminder();
       
       // Navigate to summary
       router.replace({

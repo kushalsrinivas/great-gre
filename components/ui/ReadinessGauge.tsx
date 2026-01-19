@@ -5,6 +5,7 @@ import {
   Typography,
 } from "@/lib/constants/theme";
 import { StyleSheet, Text, View } from "react-native";
+import { IconSymbol } from "./icon-symbol";
 import { CircularProgress } from "./CircularProgress";
 
 interface ReadinessGaugeProps {
@@ -20,18 +21,18 @@ export const ReadinessGauge = ({ score, status }: ReadinessGaugeProps) => {
     return Colors.danger;
   };
 
-  const getStatusEmoji = () => {
-    if (score >= 80) return "🎓";
-    if (score >= 60) return "📚";
-    if (score >= 30) return "📖";
-    return "🌱";
+  const getStatusIcon = () => {
+    if (score >= 80) return "graduationcap.fill";
+    if (score >= 60) return "books.vertical.fill";
+    if (score >= 30) return "book.fill";
+    return "leaf.fill";
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>GRE Readiness</Text>
-        <Text style={styles.emoji}>{getStatusEmoji()}</Text>
+        <IconSymbol name={getStatusIcon()} size={24} color={getStatusColor()} />
       </View>
 
       <View style={styles.gaugeContainer}>
@@ -80,9 +81,6 @@ const styles = StyleSheet.create({
     fontSize: Typography["2xl"],
     fontWeight: Typography.bold,
     color: Colors.text,
-  },
-  emoji: {
-    fontSize: 24,
   },
   gaugeContainer: {
     position: "relative",

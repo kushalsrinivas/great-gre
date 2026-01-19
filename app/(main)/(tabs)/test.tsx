@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { getTotalWordsLearned, getTestAccuracy } from '@/lib/storage/database';
 
 export default function TestingCenterScreen() {
@@ -37,13 +38,13 @@ export default function TestingCenterScreen() {
       {/* Stats Cards */}
       <View style={styles.statsContainer}>
         <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>📚</Text>
+          <IconSymbol name="books.vertical.fill" size={32} color={Colors.primary} />
           <Text style={styles.statLabel}>Words Learned</Text>
           <Text style={styles.statValue}>{wordsLearned}</Text>
         </Card>
 
         <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>📈</Text>
+          <IconSymbol name="chart.line.uptrend.xyaxis" size={32} color={Colors.success} />
           <Text style={styles.statLabel}>Recent Accuracy</Text>
           <Text style={styles.statValue}>{recentAccuracy}%</Text>
         </Card>
@@ -56,7 +57,7 @@ export default function TestingCenterScreen() {
         <Card style={styles.testCard}>
           <View style={styles.testHeader}>
             <View style={styles.testIconContainer}>
-              <Text style={styles.testIcon}>🎓</Text>
+              <IconSymbol name="graduationcap.fill" size={28} color={Colors.primary} />
             </View>
             <View style={styles.testInfo}>
               <Text style={styles.testTitle}>Learned Words</Text>
@@ -80,7 +81,7 @@ export default function TestingCenterScreen() {
         <Card style={styles.testCard}>
           <View style={styles.testHeader}>
             <View style={[styles.testIconContainer, { backgroundColor: 'rgba(168, 85, 247, 0.2)' }]}>
-              <Text style={styles.testIcon}>✨</Text>
+              <IconSymbol name="sparkles" size={28} color="#A855F7" />
             </View>
             <View style={styles.testInfo}>
               <Text style={styles.testTitle}>Random Words</Text>
@@ -110,7 +111,7 @@ export default function TestingCenterScreen() {
         <Card style={styles.testCard}>
           <View style={styles.testHeader}>
             <View style={[styles.testIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.2)' }]}>
-              <Text style={styles.testIcon}>✍️</Text>
+              <IconSymbol name="pencil" size={28} color={Colors.success} />
             </View>
             <View style={styles.testInfo}>
               <Text style={styles.testTitle}>Learned Words</Text>
@@ -134,7 +135,7 @@ export default function TestingCenterScreen() {
         <Card style={styles.testCard}>
           <View style={styles.testHeader}>
             <View style={[styles.testIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}>
-              <Text style={styles.testIcon}>🔥</Text>
+              <IconSymbol name="flame.fill" size={28} color={Colors.warning} />
             </View>
             <View style={styles.testInfo}>
               <Text style={styles.testTitle}>Random Words</Text>
@@ -164,7 +165,7 @@ export default function TestingCenterScreen() {
         <Card style={[styles.testCard, styles.lockedCard]}>
           <View style={styles.testHeader}>
             <View style={[styles.testIconContainer, { backgroundColor: 'rgba(107, 114, 128, 0.2)' }]}>
-              <Text style={styles.testIcon}>🤖</Text>
+              <IconSymbol name="cpu" size={28} color={Colors.textSecondary} />
             </View>
             <View style={styles.testInfo}>
               <Text style={styles.testTitle}>Adaptive Test</Text>
@@ -177,7 +178,7 @@ export default function TestingCenterScreen() {
             <Text style={styles.comingSoonText}>COMING SOON</Text>
           </View>
           <View style={styles.lockedOverlay}>
-            <Text style={styles.lockedIcon}>🔒</Text>
+            <IconSymbol name="lock.fill" size={32} color={Colors.textSecondary} />
             <Text style={styles.lockedText}>Locked</Text>
           </View>
         </Card>
@@ -209,10 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: Spacing.lg,
-  },
-  statIcon: {
-    fontSize: 32,
-    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
   },
   statLabel: {
     fontSize: Typography.sm,
@@ -250,9 +248,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(37, 99, 235, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  testIcon: {
-    fontSize: 28,
   },
   testInfo: {
     flex: 1,
@@ -293,10 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Spacing.md,
     padding: Spacing.md,
-  },
-  lockedIcon: {
-    fontSize: 32,
-    marginBottom: Spacing.xs,
+    gap: Spacing.xs,
   },
   lockedText: {
     fontSize: Typography.base,

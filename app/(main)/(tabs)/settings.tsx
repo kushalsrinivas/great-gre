@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
@@ -8,13 +8,62 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { resetAllData } from '@/lib/storage/async-storage';
 import { getDatabase } from '@/lib/storage/database';
 import { reimportWordLists } from '@/lib/storage/import-data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { requestNotificationPermissions, cancelAllReminders, scheduleDailyReminder } from '@/lib/services/notifications';
+import * as Notifications from 'expo-notifications';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user } = useUser();
   const [isReimporting, setIsReimporting] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  useEffect(() => {
+    checkNotificationStatus();
+  }, []);
+
+  const checkNotificationStatus = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      setNotificationsEnabled(status === 'granted');
+    } catch (error) {
+      console.error('Error checking notification status:', error);
+    }
+  };
+
+  const handleToggleNotifications = async (value: boolean) => {
+    try {
+      if (value) {
+        // Request permissions and enable notifications
+        const granted = await requestNotificationPermissions();
+        if (granted) {
+          await scheduleDailyReminder();
+          setNotificationsEnabled(true);
+          Alert.alert(
+            'Notifications Enabled',
+            'You will receive daily reminders to keep your learning streak alive!'
+          );
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'Please enable notifications in your device settings to receive learning reminders.'
+          );
+        }
+      } else {
+        // Disable notifications
+        await cancelAllReminders();
+        setNotificationsEnabled(false);
+        Alert.alert(
+          'Notifications Disabled',
+          'You will no longer receive daily learning reminders.'
+        );
+      }
+    } catch (error) {
+      console.error('Error toggling notifications:', error);
+      Alert.alert('Error', 'Failed to update notification settings.');
+    }
+  };
 
   const handleRefreshWordData = () => {
     Alert.alert(
@@ -132,7 +181,7 @@ export default function SettingsScreen() {
         <Card style={styles.optionCard}>
           <TouchableOpacity style={styles.option}>
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>🎯</Text>
+              <IconSymbol name="target" size={24} color={Colors.primary} />
               <Text style={styles.optionText}>Daily Goal</Text>
             </View>
             <View style={styles.optionRight}>
@@ -143,21 +192,29 @@ export default function SettingsScreen() {
         </Card>
 
         <Card style={styles.optionCard}>
-          <TouchableOpacity style={styles.option}>
+          <View style={styles.option}>
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>🔔</Text>
-              <Text style={styles.optionText}>Notifications</Text>
+              <IconSymbol name="bell.fill" size={24} color={Colors.primary} />
+              <View style={styles.optionTextContainer}>
+                <Text style={styles.optionText}>Daily Reminders</Text>
+                <Text style={styles.optionSubtext}>
+                  Get notified 24 hours after your last session
+                </Text>
+              </View>
             </View>
-            <View style={styles.optionRight}>
-              <IconSymbol name="chevron.right" size={20} color={Colors.textSecondary} />
-            </View>
-          </TouchableOpacity>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={handleToggleNotifications}
+              trackColor={{ false: Colors.cardBackgroundLight, true: Colors.primary }}
+              thumbColor={Colors.text}
+            />
+          </View>
         </Card>
 
         <Card style={styles.optionCard}>
           <TouchableOpacity style={styles.option}>
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>🌙</Text>
+              <IconSymbol name="moon.fill" size={24} color={Colors.primary} />
               <Text style={styles.optionText}>Dark Mode</Text>
             </View>
             <View style={styles.optionRight}>
@@ -178,7 +235,7 @@ export default function SettingsScreen() {
             disabled={isReimporting}
           >
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>🔄</Text>
+              <IconSymbol name="arrow.clockwise" size={24} color={Colors.primary} />
               <Text style={styles.optionText}>Refresh Word Data</Text>
             </View>
             {isReimporting && (
@@ -195,7 +252,7 @@ export default function SettingsScreen() {
         <Card style={styles.optionCard}>
           <TouchableOpacity style={styles.option}>
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>ℹ️</Text>
+              <IconSymbol name="info.circle.fill" size={24} color={Colors.primary} />
               <Text style={styles.optionText}>App Version</Text>
             </View>
             <Text style={styles.optionValue}>1.0.0</Text>
@@ -205,7 +262,7 @@ export default function SettingsScreen() {
         <Card style={[styles.optionCard, styles.dangerCard]}>
           <TouchableOpacity style={styles.option} onPress={handleResetProgress}>
             <View style={styles.optionLeft}>
-              <Text style={styles.optionIcon}>⚠️</Text>
+              <IconSymbol name="exclamationmark.triangle.fill" size={24} color={Colors.danger} />
               <Text style={[styles.optionText, styles.dangerText]}>Reset All Progress</Text>
             </View>
           </TouchableOpacity>
@@ -288,8 +345,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     flex: 1,
   },
-  optionIcon: {
-    fontSize: 24,
+  optionTextContainer: {
+    flex: 1,
+  },
+  optionSubtext: {
+    fontSize: Typography.xs,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
   },
   optionText: {
     fontSize: Typography.base,

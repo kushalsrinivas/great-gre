@@ -171,7 +171,7 @@ export default function SearchScreen() {
     if (!searchTerm.trim()) {
       return (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>🔍</Text>
+          <IconSymbol name="magnifyingglass" size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>Search for GRE Words</Text>
           <Text style={styles.emptyText}>
             Type any word or partial word to find matching vocabulary
@@ -206,7 +206,7 @@ export default function SearchScreen() {
     if (searchResults.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>😔</Text>
+          <IconSymbol name="exclamationmark.magnifyingglass" size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>No words found</Text>
           <Text style={styles.emptyText}>
             Try a different search term or check your spelling
@@ -348,10 +348,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: Spacing['3xl'],
     paddingTop: Spacing['4xl'],
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: Spacing.xl,
+    gap: Spacing.xl,
   },
   emptyTitle: {
     fontSize: Typography['2xl'],

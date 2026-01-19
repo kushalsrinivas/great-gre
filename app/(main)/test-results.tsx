@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { saveTestScore } from '@/lib/storage/database';
 
 export default function TestResultsScreen() {
@@ -49,11 +50,11 @@ export default function TestResultsScreen() {
   const incorrect = total - correct;
 
   const getPerformanceMessage = () => {
-    if (percentage >= 90) return '🎉 Outstanding!';
-    if (percentage >= 80) return '👏 Excellent work!';
-    if (percentage >= 70) return '👍 Good job!';
-    if (percentage >= 60) return '💪 Keep practicing!';
-    return '📚 Review and try again!';
+    if (percentage >= 90) return 'Outstanding!';
+    if (percentage >= 80) return 'Excellent work!';
+    if (percentage >= 70) return 'Good job!';
+    if (percentage >= 60) return 'Keep practicing!';
+    return 'Review and try again!';
   };
 
   const getPerformanceColor = () => {
@@ -66,7 +67,7 @@ export default function TestResultsScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Trophy Icon */}
       <View style={styles.trophyContainer}>
-        <Text style={styles.trophyIcon}>🏆</Text>
+        <IconSymbol name="trophy.fill" size={80} color={Colors.warning} />
       </View>
 
       {/* Score Card */}
@@ -86,19 +87,19 @@ export default function TestResultsScreen() {
       {/* Stats Cards */}
       <View style={styles.statsContainer}>
         <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>⏱️</Text>
+          <IconSymbol name="clock.fill" size={32} color={Colors.primary} />
           <Text style={styles.statValue}>{formatTime(parseInt(timeTaken || '0'))}</Text>
           <Text style={styles.statLabel}>Time Taken</Text>
         </Card>
 
         <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>✅</Text>
+          <IconSymbol name="checkmark.circle.fill" size={32} color={Colors.success} />
           <Text style={styles.statValue}>{correct}</Text>
           <Text style={styles.statLabel}>Correct</Text>
         </Card>
 
         <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>❌</Text>
+          <IconSymbol name="xmark.circle.fill" size={32} color={Colors.danger} />
           <Text style={styles.statValue}>{incorrect}</Text>
           <Text style={styles.statLabel}>Incorrect</Text>
         </Card>
@@ -174,9 +175,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.xl,
   },
-  trophyIcon: {
-    fontSize: 80,
-  },
   scoreCard: {
     alignItems: 'center',
     padding: Spacing['2xl'],
@@ -216,10 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: Spacing.lg,
-  },
-  statIcon: {
-    fontSize: 32,
-    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
   },
   statValue: {
     fontSize: Typography['2xl'],

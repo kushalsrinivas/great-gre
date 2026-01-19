@@ -89,7 +89,7 @@ export default function ListsScreen() {
                       <View style={styles.listHeader}>
                         <Text style={styles.listName}>{list.name}</Text>
                         {list.masteryPercentage > 50 && (
-                          <Text style={styles.trendIcon}>📈</Text>
+                          <IconSymbol name="chart.line.uptrend.xyaxis" size={20} color={Colors.success} />
                         )}
                       </View>
                       <Text style={styles.listDescription}>
@@ -156,7 +156,7 @@ export default function ListsScreen() {
         <Card style={styles.customListCard}>
           <View style={styles.customListContent}>
             <View style={styles.customListIcon}>
-              <Text style={styles.customListIconText}>🔖</Text>
+              <IconSymbol name="bookmark.fill" size={24} color={Colors.text} />
             </View>
             <View style={styles.customListInfo}>
               <Text style={styles.customListTitle}>Your Custom Lists</Text>
@@ -170,7 +170,7 @@ export default function ListsScreen() {
 
         {/* Create New List Button */}
         <TouchableOpacity style={styles.createListButton}>
-          <Text style={styles.createListIcon}>➕</Text>
+          <IconSymbol name="plus.circle.fill" size={24} color={Colors.textSecondary} />
           <Text style={styles.createListText}>Create New List</Text>
         </TouchableOpacity>
       </View>
@@ -247,9 +247,6 @@ const styles = StyleSheet.create({
     color: Colors.text,
     flex: 1,
   },
-  trendIcon: {
-    fontSize: 20,
-  },
   listDescription: {
     fontSize: Typography.sm,
     color: Colors.textSecondary,
@@ -295,9 +292,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  customListIconText: {
-    fontSize: 24,
-  },
   customListInfo: {
     flex: 1,
   },
@@ -321,9 +315,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderStyle: 'dashed',
     gap: Spacing.sm,
-  },
-  createListIcon: {
-    fontSize: 24,
   },
   createListText: {
     fontSize: Typography.lg,

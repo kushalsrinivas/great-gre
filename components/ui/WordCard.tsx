@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { VocabularyEntry } from '@/lib/types';
 
 interface WordCardProps {
@@ -40,7 +41,11 @@ export const WordCard: React.FC<WordCardProps> = ({
     <View style={styles.card}>
       {showBookmark && (
         <TouchableOpacity style={styles.bookmarkButton} onPress={onBookmark}>
-          <Text style={styles.bookmarkIcon}>{isBookmarked ? '📌' : '🔖'}</Text>
+          <IconSymbol 
+            name={isBookmarked ? 'pin.fill' : 'bookmark'} 
+            size={24} 
+            color={isBookmarked ? Colors.primary : Colors.textSecondary} 
+          />
         </TouchableOpacity>
       )}
 
@@ -54,7 +59,7 @@ export const WordCard: React.FC<WordCardProps> = ({
 
       {pronunciation && (
         <View style={styles.pronunciationContainer}>
-          <Text style={styles.pronunciationIcon}>🔊</Text>
+          <IconSymbol name="speaker.wave.2.fill" size={20} color={Colors.primary} />
           <Text style={styles.pronunciation}>/{pronunciation}/</Text>
         </View>
       )}
@@ -125,9 +130,6 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
     zIndex: 1,
   },
-  bookmarkIcon: {
-    fontSize: 24,
-  },
   partOfSpeechBadge: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.cardBackgroundLight,
@@ -154,9 +156,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.xl,
     gap: Spacing.sm,
-  },
-  pronunciationIcon: {
-    fontSize: 20,
   },
   pronunciation: {
     fontSize: Typography.lg,

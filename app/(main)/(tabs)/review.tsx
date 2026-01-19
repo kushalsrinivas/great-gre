@@ -110,7 +110,7 @@ export default function ReviewScreen() {
             title={`Start Review Session (${learnedWords.length} words)`}
             onPress={handleStartReview}
             size="large"
-            icon={<Text style={styles.buttonIcon}>🔄</Text>}
+            icon={<IconSymbol name="arrow.clockwise" size={20} color={Colors.text} />}
           />
         </View>
       )}
@@ -132,7 +132,7 @@ export default function ReviewScreen() {
                 activeOpacity={0.7}
               >
                 <View style={styles.bookmarkBadge}>
-                  <Text style={styles.bookmarkIcon}>📌</Text>
+                  <IconSymbol name="pin.fill" size={16} color={Colors.primary} />
                 </View>
                 <Text style={styles.wordText}>{word.word}</Text>
                 <View style={styles.wordMeta}>
@@ -149,7 +149,7 @@ export default function ReviewScreen() {
       {/* Empty State */}
       {learnedWords.length === 0 && (
         <Card style={styles.emptyCard}>
-          <Text style={styles.emptyIcon}>📚</Text>
+          <IconSymbol name="books.vertical.fill" size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>No Words Learned Yet</Text>
           <Text style={styles.emptyText}>
             Start learning words from your lists to see them here for review.
@@ -293,17 +293,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing['2xl'],
     marginBottom: Spacing['3xl'],
   },
-  buttonIcon: {
-    fontSize: 20,
-  },
   emptyCard: {
     marginHorizontal: Spacing['2xl'],
     padding: Spacing['3xl'],
     alignItems: 'center',
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: Spacing.lg,
+    gap: Spacing.lg,
   },
   emptyTitle: {
     fontSize: Typography.xl,
@@ -368,9 +362,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
-  },
-  bookmarkIcon: {
-    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,

@@ -6,6 +6,7 @@ import { initDatabase } from '@/lib/storage/database';
 import { importWordLists } from '@/lib/storage/import-data';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors } from '@/lib/constants/theme';
+import { checkAndSendReminderIfNeeded } from '@/lib/services/notifications';
 
 export default function RootLayout() {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -19,6 +20,10 @@ export default function RootLayout() {
       await initDatabase();
       // Import word lists on first launch
       await importWordLists();
+      
+      // Check if user needs a learning reminder
+      await checkAndSendReminderIfNeeded();
+      
       setDbInitialized(true);
     } catch (error) {
       console.error('Error initializing app:', error);

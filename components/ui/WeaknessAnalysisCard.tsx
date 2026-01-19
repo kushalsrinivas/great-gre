@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
+import { IconSymbol } from './icon-symbol';
 import { WeaknessAnalysis } from '@/lib/types';
 
 interface WeaknessAnalysisCardProps {
@@ -21,7 +22,10 @@ export const WeaknessAnalysisCard = ({
       {/* Hardest Words */}
       {weaknessAnalysis.hardestWords.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>💪 Hardest Words</Text>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="dumbbell.fill" size={16} color={Colors.warning} />
+            <Text style={styles.sectionTitle}>Hardest Words</Text>
+          </View>
           <Text style={styles.sectionDescription}>
             Words requiring the most reviews
           </Text>
@@ -50,7 +54,10 @@ export const WeaknessAnalysisCard = ({
       {/* Weak Lists */}
       {weaknessAnalysis.weakLists.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📚 Lists Needing Attention</Text>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="books.vertical.fill" size={16} color={Colors.primary} />
+            <Text style={styles.sectionTitle}>Lists Needing Attention</Text>
+          </View>
           <Text style={styles.sectionDescription}>
             Lists with lowest mastery percentage
           </Text>
@@ -89,7 +96,10 @@ export const WeaknessAnalysisCard = ({
       {/* Neglected Words */}
       {weaknessAnalysis.neglectedWords.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>⏰ Neglected Words</Text>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="clock.fill" size={16} color={Colors.danger} />
+            <Text style={styles.sectionTitle}>Neglected Words</Text>
+          </View>
           <Text style={styles.sectionDescription}>
             Learned but not reviewed in 21+ days
           </Text>
@@ -140,11 +150,16 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: Spacing.xl,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
   sectionTitle: {
     fontSize: Typography.base,
     fontWeight: Typography.bold,
     color: Colors.text,
-    marginBottom: Spacing.xs,
   },
   sectionDescription: {
     fontSize: Typography.sm,

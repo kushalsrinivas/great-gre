@@ -16,6 +16,7 @@ import { WeaknessAnalysisCard } from '@/components/ui/WeaknessAnalysisCard';
 import { ConsistencyMetricsCard } from '@/components/ui/ConsistencyMetricsCard';
 import { ProgressQualityCard } from '@/components/ui/ProgressQualityCard';
 import { MicroInsightCard } from '@/components/ui/MicroInsightCard';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useStats } from '@/lib/hooks/useStats';
 import { useState } from 'react';
 
@@ -78,14 +79,14 @@ export default function StatsScreen() {
       <View style={styles.statsGrid}>
         <View style={styles.statRow}>
           <StatCard
-            icon={<Text style={styles.statIcon}>📚</Text>}
+            icon={<IconSymbol name="books.vertical.fill" size={24} color={Colors.primary} />}
             label="Words Learned"
             value={stats.totalWordsLearned}
             variant="primary"
             style={styles.statCard}
           />
           <StatCard
-            icon={<Text style={styles.statIcon}>🔥</Text>}
+            icon={<IconSymbol name="flame.fill" size={24} color={Colors.success} />}
             label="Current Streak"
             value={`${stats.currentStreak} days`}
             variant="success"
@@ -94,14 +95,14 @@ export default function StatsScreen() {
         </View>
         <View style={styles.statRow}>
           <StatCard
-            icon={<Text style={styles.statIcon}>🎯</Text>}
+            icon={<IconSymbol name="target" size={24} color={Colors.warning} />}
             label="Test Accuracy"
             value={`${stats.testAccuracy}%`}
             variant="warning"
             style={styles.statCard}
           />
           <StatCard
-            icon={<Text style={styles.statIcon}>⚡</Text>}
+            icon={<IconSymbol name="bolt.fill" size={24} color={Colors.text} />}
             label="Learning Velocity"
             value={`${stats.learningVelocity}/day`}
             variant="default"
@@ -113,7 +114,10 @@ export default function StatsScreen() {
       {/* Micro Insights - Rotating "Did you know?" */}
       {advancedStats && advancedStats.microInsights.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>💡 Insights</Text>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="lightbulb.fill" size={20} color={Colors.warning} />
+            <Text style={styles.sectionTitle}>Insights</Text>
+          </View>
           <View style={styles.insightsContainer}>
             {advancedStats.microInsights.map((insight, index) => (
               <MicroInsightCard key={index} insight={insight} />
@@ -180,8 +184,9 @@ export default function StatsScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Activity Calendar</Text>
           <View style={styles.streakBadge}>
+            <IconSymbol name="trophy.fill" size={14} color={Colors.success} />
             <Text style={styles.streakBadgeText}>
-              🏆 Best: {stats.maxStreak} days
+              Best: {stats.maxStreak} days
             </Text>
           </View>
         </View>
@@ -205,7 +210,10 @@ export default function StatsScreen() {
       {advancedStats && (
         <View style={styles.section}>
           <Card style={styles.coverageCard}>
-            <Text style={styles.cardTitle}>📖 Vocabulary Coverage</Text>
+            <View style={styles.cardTitleContainer}>
+              <IconSymbol name="book.fill" size={20} color={Colors.primary} />
+              <Text style={styles.cardTitle}>Vocabulary Coverage</Text>
+            </View>
             <View style={styles.coverageContent}>
               <Text style={styles.coveragePercentage}>
                 {advancedStats.greReadiness.vocabularyCoverage}%
@@ -257,12 +265,24 @@ export default function StatsScreen() {
       {advancedStats && advancedStats.accuracyVsTimeMetrics.recentTests.length > 0 && (
         <View style={styles.section}>
           <Card style={styles.accuracyCard}>
-            <Text style={styles.cardTitle}>📈 Test Performance Trend</Text>
+            <View style={styles.cardTitleContainer}>
+              <IconSymbol name="chart.line.uptrend.xyaxis" size={20} color={Colors.primary} />
+              <Text style={styles.cardTitle}>Test Performance Trend</Text>
+            </View>
             <View style={styles.trendBadge}>
+              <IconSymbol 
+                name={advancedStats.accuracyVsTimeMetrics.trend === 'improving' ? 'arrow.up.right' :
+                      advancedStats.accuracyVsTimeMetrics.trend === 'declining' ? 'arrow.down.right' :
+                      'arrow.right'}
+                size={16}
+                color={advancedStats.accuracyVsTimeMetrics.trend === 'improving' ? Colors.success :
+                       advancedStats.accuracyVsTimeMetrics.trend === 'declining' ? Colors.danger :
+                       Colors.textSecondary}
+              />
               <Text style={styles.trendText}>
-                {advancedStats.accuracyVsTimeMetrics.trend === 'improving' ? '📈 Improving' :
-                 advancedStats.accuracyVsTimeMetrics.trend === 'declining' ? '📉 Declining' :
-                 '➡️ Stable'}
+                {advancedStats.accuracyVsTimeMetrics.trend === 'improving' ? 'Improving' :
+                 advancedStats.accuracyVsTimeMetrics.trend === 'declining' ? 'Declining' :
+                 'Stable'}
               </Text>
             </View>
             <Text style={styles.accuracyInsight}>
@@ -346,7 +366,7 @@ export default function StatsScreen() {
           title="Continue Learning"
           onPress={() => router.push('/(main)/(tabs)/lists')}
           size="large"
-          icon={<Text style={styles.buttonIcon}>🎓</Text>}
+          icon={<IconSymbol name="graduationcap.fill" size={20} color={Colors.text} />}
         />
       </View>
     </ScrollView>
@@ -398,9 +418,6 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
   },
-  statIcon: {
-    fontSize: 24,
-  },
   section: {
     paddingHorizontal: Spacing['2xl'],
     marginBottom: Spacing['2xl'],
@@ -411,11 +428,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.lg,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
   sectionTitle: {
     fontSize: Typography.xl,
     fontWeight: Typography.bold,
     color: Colors.text,
-    marginBottom: Spacing.lg,
   },
   sectionLink: {
     fontSize: Typography.sm,
@@ -426,6 +448,9 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
     backgroundColor: 'rgba(16, 185, 129, 0.2)',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -468,11 +493,16 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     alignItems: 'center',
   },
+  cardTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
   cardTitle: {
     fontSize: Typography.xl,
     fontWeight: Typography.bold,
     color: Colors.text,
-    marginBottom: Spacing.lg,
   },
   coverageContent: {
     alignItems: 'center',
@@ -534,10 +564,13 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   trendBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
     backgroundColor: Colors.cardBackgroundLight,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
-    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.md,
   },
   trendText: {
@@ -594,8 +627,5 @@ const styles = StyleSheet.create({
   actionSection: {
     paddingHorizontal: Spacing['2xl'],
     marginTop: Spacing.lg,
-  },
-  buttonIcon: {
-    fontSize: 20,
   },
 });
