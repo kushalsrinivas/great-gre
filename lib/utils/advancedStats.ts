@@ -239,14 +239,14 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
       title: 'Quick Learner',
       message: `You master words in just ${efficiency.averageReviewsToMaster} reviews on average!`,
       type: 'positive',
-      icon: '⚡',
+      icon: 'bolt.fill',
     });
   } else if (efficiency.averageReviewsToMaster >= 7) {
     insights.push({
       title: 'Deep Learning',
       message: 'You prefer thorough understanding over speed—great for long-term retention!',
       type: 'neutral',
-      icon: '🧠',
+      icon: 'brain.head.profile',
     });
   }
 
@@ -256,7 +256,7 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
       title: 'Review Alert',
       message: 'Your retention could improve. Try reviewing words more frequently.',
       type: 'suggestion',
-      icon: '⚠️',
+      icon: 'exclamationmark.triangle.fill',
     });
   }
 
@@ -266,7 +266,7 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
       title: 'Consistency Champion',
       message: `You've been active ${consistency.activeDaysLast30} out of 30 days!`,
       type: 'positive',
-      icon: '🎯',
+      icon: 'target',
     });
   }
 
@@ -276,7 +276,7 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
       title: 'Optimal Learning',
       message: 'You learn quickly AND retain well. Keep it up!',
       type: 'positive',
-      icon: '🚀',
+      icon: 'arrow.up.right',
     });
   }
 
@@ -295,7 +295,7 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
         title: 'Test Master',
         message: `Your average test accuracy is ${Math.round(avgAccuracy)}%!`,
         type: 'positive',
-        icon: '🏆',
+        icon: 'trophy.fill',
       });
     }
   }
@@ -307,7 +307,7 @@ export const generateMicroInsights = async (): Promise<MicroInsight[]> => {
       title: 'Peak Performance',
       message: `You learn best on ${bestDay.day}s with ${bestDay.wordCount} words learned!`,
       type: 'neutral',
-      icon: '📊',
+      icon: 'chart.bar.fill',
     });
   }
 
@@ -330,9 +330,18 @@ export const calculateAccuracyVsTime = async (): Promise<any> => {
     const [correct, total] = score.score.split('/').map(Number);
     const accuracy = (correct / total) * 100;
     
-    // Parse time taken (HH:MM:SS format)
-    const timeParts = score.timeTaken.split(':').map(Number);
-    const timeTaken = (timeParts[0] * 3600) + (timeParts[1] * 60) + timeParts[2];
+    // Parse time taken (prefer HH:MM:SS, but tolerate legacy numeric seconds)
+    const raw = (score.timeTaken ?? '').toString();
+    let timeTaken = 0;
+    if (raw.includes(':')) {
+      const parts = raw.split(':').map((p) => parseInt(p, 10));
+      if (parts.length === 3) timeTaken = (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+      else if (parts.length === 2) timeTaken = (parts[0] * 60) + parts[1];
+      else if (parts.length === 1) timeTaken = parts[0] || 0;
+    } else {
+      const secs = parseInt(raw, 10);
+      timeTaken = Number.isFinite(secs) ? secs : 0;
+    }
 
     return {
       accuracy,

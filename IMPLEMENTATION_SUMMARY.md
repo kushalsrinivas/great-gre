@@ -156,7 +156,7 @@ This document summarizes the complete implementation of the GRE Vocabulary Learn
 
 ---
 
-## 📊 Key Features
+## Key Features
 
 ### Learning Flow
 1. User selects a word list
@@ -206,7 +206,7 @@ This document summarizes the complete implementation of the GRE Vocabulary Learn
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
 ```bash
 # Install dependencies
@@ -332,7 +332,7 @@ Set Profile              Word Lists Explorer
 
 ---
 
-## 🎉 Conclusion
+## Conclusion
 
 The GRE Vocabulary Learning App is now **fully functional** with all core features implemented. The app provides an engaging, gamified experience for learning GRE vocabulary with:
 

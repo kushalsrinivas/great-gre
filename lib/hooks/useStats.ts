@@ -5,10 +5,11 @@ import {
   getTestScores,
   getTestAccuracy,
   getWordLists,
+  getGREPracticeStatsSummary,
 } from '../storage/database';
 import { getStatistics, getUserProfile } from '../storage/async-storage';
 import { getAdvancedStatistics } from '../utils/advancedStats';
-import { Statistics, TestScore, LearningProgress, WordList, AdvancedStats } from '../types';
+import { Statistics, TestScore, LearningProgress, WordList, AdvancedStats, GREPracticeStatsSummary } from '../types';
 
 export interface MasteryBreakdown {
   dontKnow: number;
@@ -30,6 +31,7 @@ export interface StatsData {
   totalReviews: number;
   daysActive: number;
   advancedStats: AdvancedStats | null;
+  grePractice: GREPracticeStatsSummary | null;
 }
 
 export const useStats = () => {
@@ -47,6 +49,7 @@ export const useStats = () => {
     totalReviews: 0,
     daysActive: 0,
     advancedStats: null,
+    grePractice: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +69,7 @@ export const useStats = () => {
         userProfile,
         wordLists,
         advancedStats,
+        grePractice,
       ] = await Promise.all([
         getTotalWordsLearned(),
         getAllLearningProgress(),
@@ -75,6 +79,7 @@ export const useStats = () => {
         getUserProfile(),
         getWordLists(),
         getAdvancedStatistics(),
+        getGREPracticeStatsSummary(),
       ]);
 
       // Calculate mastery breakdown
@@ -126,6 +131,7 @@ export const useStats = () => {
         totalReviews,
         daysActive,
         advancedStats,
+        grePractice,
       });
     } catch (err) {
       console.error('Error loading stats:', err);

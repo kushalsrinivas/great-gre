@@ -39,7 +39,7 @@ export const getEncouragementMessage = (progress: number, goal: number): string 
   if (percentage < 50) return "You're doing well!";
   if (percentage < 80) return `Keep it up! You're ${Math.round(percentage)}% there.`;
   if (percentage < 100) return "Almost there! Just a few more!";
-  return "Goal achieved! 🎉";
+  return "Goal achieved!";
 };
 
 export const getDaysInMonth = (year: number, month: number): number => {

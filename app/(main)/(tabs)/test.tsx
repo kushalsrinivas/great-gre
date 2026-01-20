@@ -50,6 +50,30 @@ export default function TestingCenterScreen() {
         </Card>
       </View>
 
+      {/* GRE Verbal Practice */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>GRE Verbal Practice</Text>
+
+        <Card style={styles.testCard}>
+          <View style={styles.testHeader}>
+            <View style={[styles.testIconContainer, { backgroundColor: 'rgba(37, 99, 235, 0.2)' }]}>
+              <IconSymbol name="book.fill" size={28} color={Colors.primary} />
+            </View>
+            <View style={styles.testInfo}>
+              <Text style={styles.testTitle}>Sentence Equivalence & Text Completion</Text>
+              <Text style={styles.testDescription}>
+                Practice GRE verbal formats with explanations and review mode.
+              </Text>
+            </View>
+          </View>
+          <Button
+            title="Start Practice"
+            onPress={() => router.push('/(main)/gre-practice-setup')}
+            style={styles.testButton}
+          />
+        </Card>
+      </View>
+
       {/* Multiple Choice Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Multiple Choice (MCQ)</Text>

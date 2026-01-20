@@ -42,6 +42,7 @@ export default function StatsScreen() {
   }
 
   const advancedStats = stats.advancedStats;
+  const grePractice = stats.grePractice;
 
   return (
     <ScrollView
@@ -110,6 +111,76 @@ export default function StatsScreen() {
           />
         </View>
       </View>
+
+      {/* GRE Practice */}
+      {grePractice && (
+        <View style={styles.section}>
+          <View style={styles.sectionTitleContainer}>
+            <IconSymbol name="graduationcap.fill" size={20} color={Colors.primary} />
+            <Text style={styles.sectionTitle}>GRE Practice</Text>
+          </View>
+
+          <View style={styles.grePracticeGrid}>
+            <Card style={styles.grePracticeCard}>
+              <Text style={styles.grePracticeLabel}>Attempts</Text>
+              <Text style={styles.grePracticeValue}>{grePractice.totalAttempts}</Text>
+            </Card>
+            <Card style={styles.grePracticeCard}>
+              <Text style={styles.grePracticeLabel}>Accuracy</Text>
+              <Text style={styles.grePracticeValue}>{grePractice.accuracy}%</Text>
+            </Card>
+          </View>
+
+          {grePractice.byType.length > 0 && (
+            <Card style={styles.grePracticeDetailCard}>
+              <View style={styles.grePracticeDetailHeader}>
+                <Text style={styles.grePracticeDetailTitle}>By Question Type</Text>
+                <View style={styles.trendBadge}>
+                  <IconSymbol
+                    name={
+                      grePractice.trend === 'improving'
+                        ? 'arrow.up.right'
+                        : grePractice.trend === 'declining'
+                          ? 'arrow.down.right'
+                          : 'arrow.right'
+                    }
+                    size={16}
+                    color={
+                      grePractice.trend === 'improving'
+                        ? Colors.success
+                        : grePractice.trend === 'declining'
+                          ? Colors.danger
+                          : Colors.textSecondary
+                    }
+                  />
+                  <Text style={styles.trendText}>
+                    {grePractice.trend === 'improving'
+                      ? 'Improving'
+                      : grePractice.trend === 'declining'
+                        ? 'Declining'
+                        : 'Stable'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.grePracticeTypeList}>
+                {grePractice.byType.slice(0, 4).map((t) => (
+                  <View key={t.questionType} style={styles.grePracticeTypeRow}>
+                    <Text style={styles.grePracticeTypeName}>
+                      {t.questionType === 'equivalent_meaning'
+                        ? 'Sentence Equivalence'
+                        : 'Text Completion'}
+                    </Text>
+                    <Text style={styles.grePracticeTypeValue}>
+                      {t.accuracy}% ({t.totalAttempts})
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          )}
+        </View>
+      )}
 
       {/* Micro Insights - Rotating "Did you know?" */}
       {advancedStats && advancedStats.microInsights.length > 0 && (
@@ -237,7 +308,10 @@ export default function StatsScreen() {
       {advancedStats && advancedStats.bookmarkEffectiveness.totalBookmarked > 0 && (
         <View style={styles.section}>
           <Card style={styles.bookmarkCard}>
-            <Text style={styles.cardTitle}>🔖 Bookmark Effectiveness</Text>
+            <View style={styles.cardTitleContainer}>
+              <IconSymbol name="bookmark.fill" size={20} color={Colors.primary} />
+              <Text style={styles.cardTitle}>Bookmark Effectiveness</Text>
+            </View>
             <View style={styles.bookmarkMetrics}>
               <View style={styles.bookmarkMetric}>
                 <Text style={styles.bookmarkValue}>
@@ -446,6 +520,57 @@ const styles = StyleSheet.create({
   },
   insightsContainer: {
     gap: Spacing.md,
+  },
+  grePracticeGrid: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  grePracticeCard: {
+    flex: 1,
+    padding: Spacing.lg,
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  grePracticeLabel: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+  },
+  grePracticeValue: {
+    fontSize: Typography['2xl'],
+    fontWeight: Typography.extrabold,
+    color: Colors.text,
+  },
+  grePracticeDetailCard: {
+    padding: Spacing.lg,
+  },
+  grePracticeDetailHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.md,
+  },
+  grePracticeDetailTitle: {
+    fontSize: Typography.lg,
+    fontWeight: Typography.bold,
+    color: Colors.text,
+  },
+  grePracticeTypeList: {
+    gap: Spacing.sm,
+  },
+  grePracticeTypeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  grePracticeTypeName: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+  },
+  grePracticeTypeValue: {
+    fontSize: Typography.sm,
+    fontWeight: Typography.semibold,
+    color: Colors.text,
   },
   streakBadge: {
     flexDirection: 'row',

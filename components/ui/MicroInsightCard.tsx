@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/lib/constants/theme';
 import { MicroInsight } from '@/lib/types';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 interface MicroInsightCardProps {
   insight: MicroInsight;
@@ -39,7 +40,13 @@ export const MicroInsightCard = ({ insight }: MicroInsightCardProps) => {
         },
       ]}
     >
-      <Text style={styles.icon}>{insight.icon}</Text>
+      <View style={styles.icon}>
+        <IconSymbol
+          name={(insight.icon || 'lightbulb.fill') as any}
+          size={22}
+          color={insight.type === 'positive' ? Colors.success : insight.type === 'suggestion' ? Colors.warning : Colors.textSecondary}
+        />
+      </View>
       <View style={styles.content}>
         <Text style={styles.title}>{insight.title}</Text>
         <Text style={styles.message}>{insight.message}</Text>
@@ -58,7 +65,12 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   icon: {
-    fontSize: 32,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,

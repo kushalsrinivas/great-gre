@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { Word, VocabularyEntry, WordList, LearningProgress, TestScore } from '../types';
+import { Word, VocabularyEntry, WordList, LearningProgress, TestScore, GREPracticeSession, GREQuestionAttempt, GREPracticeStatsSummary } from '../types';
 
 let db: SQLite.SQLiteDatabase | null = null;
 
@@ -60,11 +60,40 @@ export const initDatabase = async (): Promise<void> => {
         date TEXT NOT NULL,
         timestamp TEXT NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS gre_practice_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        mode TEXT NOT NULL,
+        question_types TEXT NOT NULL,
+        question_count INTEGER NOT NULL,
+        started_at INTEGER NOT NULL,
+        ended_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS gre_question_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id INTEGER,
+        question_key TEXT NOT NULL,
+        question_type TEXT NOT NULL,
+        question_text TEXT NOT NULL,
+        explanation_text TEXT NOT NULL DEFAULT '',
+        options_json TEXT NOT NULL,
+        correct_json TEXT NOT NULL,
+        selected_json TEXT NOT NULL,
+        is_correct INTEGER NOT NULL,
+        time_ms INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (session_id) REFERENCES gre_practice_sessions(id) ON DELETE SET NULL
+      );
       
       CREATE INDEX IF NOT EXISTS idx_words_list ON words(list_id);
       CREATE INDEX IF NOT EXISTS idx_words_word ON words(word);
       CREATE INDEX IF NOT EXISTS idx_progress_word ON learning_progress(word_id);
       CREATE INDEX IF NOT EXISTS idx_progress_mastery ON learning_progress(mastery_level);
+      CREATE INDEX IF NOT EXISTS idx_gre_attempts_created ON gre_question_attempts(created_at);
+      CREATE INDEX IF NOT EXISTS idx_gre_attempts_type ON gre_question_attempts(question_type);
+      CREATE INDEX IF NOT EXISTS idx_gre_attempts_correct ON gre_question_attempts(is_correct);
+      CREATE INDEX IF NOT EXISTS idx_gre_attempts_key ON gre_question_attempts(question_key);
     `);
     
     // Migration: Add is_bookmarked column if it doesn't exist
@@ -79,6 +108,20 @@ export const initDatabase = async (): Promise<void> => {
       }
     } catch (migrationError) {
       console.error('Migration error:', migrationError);
+    }
+
+    // Migration: Add explanation_text column to gre_question_attempts if it doesn't exist
+    try {
+      const greAttemptsInfo = await db.getAllAsync<any>('PRAGMA table_info(gre_question_attempts)');
+      const hasExplanation = greAttemptsInfo.some((col: any) => col.name === 'explanation_text');
+      if (!hasExplanation) {
+        console.log('Adding explanation_text column to gre_question_attempts table...');
+        await db.execAsync("ALTER TABLE gre_question_attempts ADD COLUMN explanation_text TEXT NOT NULL DEFAULT ''");
+        console.log('Migration completed: explanation_text column added');
+      }
+    } catch (greMigrationError) {
+      // If table doesn't exist yet or migration fails, ignore safely.
+      console.error('GRE attempts migration error:', greMigrationError);
     }
     
     console.log('Database initialized successfully');
@@ -422,6 +465,167 @@ export const getTestScores = async (): Promise<TestScore[]> => {
     date: s.date,
     timestamp: s.timestamp,
   }));
+};
+
+// GRE Practice (Verbal) - Sessions & Attempts
+export const createGREPracticeSession = async (params: {
+  mode: string;
+  questionTypes: string[];
+  questionCount: number;
+}): Promise<number> => {
+  const database = getDatabase();
+  const startedAt = Date.now();
+  const questionTypesJson = JSON.stringify(params.questionTypes);
+
+  const result = await database.runAsync(
+    `INSERT INTO gre_practice_sessions (mode, question_types, question_count, started_at)
+     VALUES (?, ?, ?, ?)`,
+    [params.mode, questionTypesJson, params.questionCount, startedAt]
+  );
+
+  return result.lastInsertRowId;
+};
+
+export const endGREPracticeSession = async (sessionId: number): Promise<void> => {
+  const database = getDatabase();
+  await database.runAsync(
+    'UPDATE gre_practice_sessions SET ended_at = ? WHERE id = ?',
+    [Date.now(), sessionId]
+  );
+};
+
+export const saveGREQuestionAttempt = async (attempt: Omit<GREQuestionAttempt, 'id'>): Promise<void> => {
+  const database = getDatabase();
+  await database.runAsync(
+    `INSERT INTO gre_question_attempts
+      (session_id, question_key, question_type, question_text, explanation_text, options_json, correct_json, selected_json, is_correct, time_ms, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      attempt.sessionId ?? null,
+      attempt.questionKey,
+      attempt.questionType,
+      attempt.questionText,
+      attempt.explanationText,
+      attempt.optionsJson,
+      attempt.correctJson,
+      attempt.selectedJson,
+      attempt.isCorrect ? 1 : 0,
+      attempt.timeMs,
+      attempt.createdAt,
+    ]
+  );
+};
+
+export const getGREPracticeSession = async (sessionId: number): Promise<GREPracticeSession | null> => {
+  const database = getDatabase();
+  const row = await database.getFirstAsync<any>(
+    'SELECT * FROM gre_practice_sessions WHERE id = ?',
+    [sessionId]
+  );
+  if (!row) return null;
+  return {
+    id: row.id,
+    mode: row.mode,
+    questionTypes: JSON.parse(row.question_types ?? '[]'),
+    questionCount: row.question_count,
+    startedAt: row.started_at,
+    endedAt: row.ended_at ?? null,
+  };
+};
+
+export const getGREAttemptsForSession = async (sessionId: number): Promise<GREQuestionAttempt[]> => {
+  const database = getDatabase();
+  const rows = await database.getAllAsync<any>(
+    'SELECT * FROM gre_question_attempts WHERE session_id = ? ORDER BY created_at ASC, id ASC',
+    [sessionId]
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    sessionId: r.session_id ?? null,
+    questionKey: r.question_key,
+    questionType: r.question_type,
+    questionText: r.question_text,
+    explanationText: r.explanation_text ?? '',
+    optionsJson: r.options_json,
+    correctJson: r.correct_json,
+    selectedJson: r.selected_json,
+    isCorrect: r.is_correct === 1,
+    timeMs: r.time_ms,
+    createdAt: r.created_at,
+  }));
+};
+
+export const getGREPracticeStatsSummary = async (): Promise<GREPracticeStatsSummary> => {
+  const database = getDatabase();
+
+  const totals = await database.getFirstAsync<any>(
+    `SELECT
+      COUNT(*) as totalAttempts,
+      SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as totalCorrect
+     FROM gre_question_attempts`
+  );
+
+  const byTypeRows = await database.getAllAsync<any>(
+    `SELECT
+      question_type as questionType,
+      COUNT(*) as totalAttempts,
+      SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as totalCorrect
+     FROM gre_question_attempts
+     GROUP BY question_type
+     ORDER BY totalAttempts DESC`
+  );
+
+  const recentRows = await database.getAllAsync<any>(
+    `SELECT is_correct, time_ms, created_at, question_type
+     FROM gre_question_attempts
+     ORDER BY created_at DESC
+     LIMIT 20`
+  );
+
+  const totalAttempts = totals?.totalAttempts ?? 0;
+  const totalCorrect = totals?.totalCorrect ?? 0;
+  const accuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+
+  const byType = byTypeRows.map((r) => {
+    const t = r.totalAttempts ?? 0;
+    const c = r.totalCorrect ?? 0;
+    return {
+      questionType: r.questionType,
+      totalAttempts: t,
+      accuracy: t > 0 ? Math.round((c / t) * 100) : 0,
+    };
+  });
+
+  const recent = recentRows.map((r) => ({
+    isCorrect: r.is_correct === 1,
+    timeMs: r.time_ms,
+    createdAt: r.created_at,
+    questionType: r.question_type,
+  }));
+
+  // Simple trend heuristic: compare first half vs second half accuracy
+  let trend: 'improving' | 'stable' | 'declining' = 'stable';
+  if (recent.length >= 10) {
+    const firstHalf = recent.slice(Math.floor(recent.length / 2));
+    const secondHalf = recent.slice(0, Math.floor(recent.length / 2));
+    const acc = (xs: typeof recent) => {
+      const tot = xs.length;
+      const cor = xs.filter((x) => x.isCorrect).length;
+      return tot > 0 ? (cor / tot) * 100 : 0;
+    };
+    const a1 = acc(firstHalf);
+    const a2 = acc(secondHalf);
+    if (a2 > a1 + 5) trend = 'improving';
+    else if (a2 < a1 - 5) trend = 'declining';
+  }
+
+  return {
+    totalAttempts,
+    accuracy,
+    byType,
+    recent,
+    trend,
+  };
 };
 
 // Statistics

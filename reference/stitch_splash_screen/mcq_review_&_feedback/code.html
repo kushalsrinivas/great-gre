@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MCQ Review &amp; Feedback</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#14161a", // Deep charcoal as requested
+                        "card-dark": "#292c33",       // Focus Card background
+                        "success": "#26B226",
+                        "error": "#DB2E47",
+                        "text-muted": "#B1B6BF"
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen">
+<!-- Sticky Header (iOS Standard) -->
+<nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 ios-blur border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center justify-between px-4 h-16">
+<button class="flex items-center text-primary font-medium gap-1">
+<span class="material-symbols-outlined">chevron_left</span>
+<span>Results</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Review Mode</h1>
+<div class="w-16"></div> <!-- Spacer for symmetry -->
+</div>
+<!-- Progress Bar Component -->
+<div class="px-4 pb-3">
+<div class="flex justify-between items-end mb-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-text-muted">GRE Vocabulary Set 4</span>
+<span class="text-sm font-bold">15 / 20 Correct</span>
+</div>
+<div class="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 75%;"></div>
+</div>
+</div>
+</nav>
+<main class="p-4 space-y-4 max-w-2xl mx-auto pb-20">
+<!-- Section Header -->
+<div class="flex items-center justify-between pt-2">
+<h2 class="text-xl font-bold">Question Review</h2>
+<span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-bold">Filter: Incorrect</span>
+</div>
+<!-- Focus Cards (Accordions) -->
+<div class="space-y-4">
+<!-- Card 1: Correct Answer -->
+<details class="group bg-white dark:bg-card-dark rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300">
+<summary class="list-none cursor-pointer p-4">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-black text-primary uppercase">Question 01</span>
+<span class="material-symbols-outlined text-success text-sm">check_circle</span>
+</div>
+<p class="text-base font-semibold leading-relaxed">
+                                The senator's speech was surprisingly <span class="text-primary underline decoration-2 underline-offset-4">______</span>, lacking the expected rhetorical flourish.
+                            </p>
+</div>
+<span class="material-symbols-outlined text-text-muted group-open:rotate-180 transition-transform duration-300">expand_more</span>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20">
+<span class="text-[10px] font-bold uppercase text-success">Your Answer</span>
+<span class="text-sm font-medium">Laconic</span>
+</div>
+</div>
+</summary>
+<div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 mt-2 pt-4">
+<h4 class="text-xs font-bold uppercase text-text-muted tracking-widest mb-2">Explanation</h4>
+<p class="text-sm leading-7 text-gray-600 dark:text-gray-300 mb-6">
+                        The contrast with 'rhetorical flourish' suggests a need for a word meaning brief or concise. 'Laconic' fits this context perfectly, as it describes a style of speaking that uses few words to express complex ideas.
+                    </p>
+<h4 class="text-xs font-bold uppercase text-text-muted tracking-widest mb-3">Vocabulary Breakdown</h4>
+<div class="space-y-3">
+<!-- ListItem Style -->
+<div class="flex items-start gap-3 bg-gray-50 dark:bg-background-dark/50 p-3 rounded-lg">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm">Laconic</p>
+<span class="text-[10px] italic text-text-muted">/ləˈkɒnɪk/</span>
+</div>
+<p class="text-xs text-text-muted">(adj.) using very few words; concise to the point of seeming rude or mysterious.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-gray-50 dark:bg-background-dark/50 p-3 rounded-lg">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm">Rhetorical</p>
+<span class="text-[10px] italic text-text-muted">/rɪˈtɒrɪk(ə)l/</span>
+</div>
+<p class="text-xs text-text-muted">(adj.) expressed in terms intended to persuade or influence.</p>
+</div>
+</div>
+</div>
+</div>
+</details>
+<!-- Card 2: Incorrect Answer -->
+<details class="group bg-white dark:bg-card-dark rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300" open="">
+<summary class="list-none cursor-pointer p-4">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-black text-primary uppercase">Question 02</span>
+<span class="material-symbols-outlined text-error text-sm">cancel</span>
+</div>
+<p class="text-base font-semibold leading-relaxed">
+                                Her <span class="text-primary underline decoration-2 underline-offset-4">______</span> nature made it difficult for her to make friends in the new city.
+                            </p>
+</div>
+<span class="material-symbols-outlined text-text-muted group-open:rotate-180 transition-transform duration-300">expand_more</span>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 border border-error/20">
+<span class="text-[10px] font-bold uppercase text-error">Your Answer</span>
+<span class="text-sm font-medium line-through decoration-error/50">Gregarious</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20">
+<span class="text-[10px] font-bold uppercase text-success">Correct</span>
+<span class="text-sm font-medium text-success">Diffident</span>
+</div>
+</div>
+</summary>
+<div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 mt-2 pt-4">
+<h4 class="text-xs font-bold uppercase text-text-muted tracking-widest mb-2">Explanation</h4>
+<p class="text-sm leading-7 text-gray-600 dark:text-gray-300 mb-6">
+                        The phrase "difficult for her to make friends" suggests a personality trait that involves shyness or a lack of self-confidence. <span class="text-primary font-bold">Diffident</span> specifically refers to modesty or shyness arising from a lack of self-confidence. <span class="text-error italic">Gregarious</span> would mean the exact opposite.
+                    </p>
+<h4 class="text-xs font-bold uppercase text-text-muted tracking-widest mb-3">Vocabulary Breakdown</h4>
+<div class="space-y-3">
+<div class="flex items-start gap-3 bg-gray-50 dark:bg-background-dark/50 p-3 rounded-lg border-l-4 border-success">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center text-success">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm">Diffident</p>
+<span class="text-[10px] italic text-text-muted">/ˈdɪfɪd(ə)nt/</span>
+</div>
+<p class="text-xs text-text-muted">(adj.) modest or shy because of a lack of self-confidence.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-gray-50 dark:bg-background-dark/50 p-3 rounded-lg border-l-4 border-error">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm">Gregarious</p>
+<span class="text-[10px] italic text-text-muted">/ɡrɪˈɡɛːrɪəs/</span>
+</div>
+<p class="text-xs text-text-muted">(adj.) (of a person) fond of company; sociable.</p>
+</div>
+</div>
+</div>
+</div>
+</details>
+<!-- Card 3: Another Correct -->
+<details class="group bg-white dark:bg-card-dark rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300">
+<summary class="list-none cursor-pointer p-4">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-black text-primary uppercase">Question 03</span>
+<span class="material-symbols-outlined text-success text-sm">check_circle</span>
+</div>
+<p class="text-base font-semibold leading-relaxed">
+                                The CEO's <span class="text-primary underline decoration-2 underline-offset-4">______</span> attitude towards the junior staff was widely criticized.
+                            </p>
+</div>
+<span class="material-symbols-outlined text-text-muted group-open:rotate-180 transition-transform duration-300">expand_more</span>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20">
+<span class="text-[10px] font-bold uppercase text-success">Your Answer</span>
+<span class="text-sm font-medium">Supercilious</span>
+</div>
+</div>
+</summary>
+<div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 mt-2 pt-4">
+<!-- Content mirrored for layout demo -->
+</div>
+</details>
+</div>
+</main>
+<!-- Floating Action Bar for Review -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light dark:via-background-dark to-transparent">
+<div class="max-w-2xl mx-auto flex gap-3">
+<button class="flex-1 bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span>Start Practice Session</span>
+<span class="material-symbols-outlined">bolt</span>
+</button>
+</div>
+</div>
+</body></html>

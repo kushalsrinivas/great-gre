@@ -224,3 +224,45 @@ export interface AdvancedStats {
     insight: string;
   };
 }
+
+// GRE Verbal Practice Types
+export interface GREPracticeSession {
+  id: number;
+  mode: string;
+  questionTypes: string[];
+  questionCount: number;
+  startedAt: number; // epoch ms
+  endedAt: number | null; // epoch ms
+}
+
+export interface GREQuestionAttempt {
+  id?: number;
+  sessionId: number | null;
+  questionKey: string;
+  questionType: string;
+  questionText: string;
+  explanationText: string;
+  optionsJson: string;
+  correctJson: string;
+  selectedJson: string;
+  isCorrect: boolean;
+  timeMs: number;
+  createdAt: number; // epoch ms
+}
+
+export interface GREPracticeStatsSummary {
+  totalAttempts: number;
+  accuracy: number; // 0-100
+  byType: Array<{
+    questionType: string;
+    totalAttempts: number;
+    accuracy: number; // 0-100
+  }>;
+  recent: Array<{
+    isCorrect: boolean;
+    timeMs: number;
+    createdAt: number;
+    questionType: string;
+  }>;
+  trend: 'improving' | 'stable' | 'declining';
+}

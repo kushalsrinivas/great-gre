@@ -22,12 +22,20 @@ export default function TestResultsScreen() {
 
   const saveScore = async () => {
     try {
+      const seconds = parseInt(timeTaken || '0', 10) || 0;
+      const toHms = (totalSeconds: number) => {
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      };
+
       await saveTestScore({
         testType: testType || 'Unknown',
         score: score || '0/0',
-        timeTaken: parseInt(timeTaken || '0'),
+        timeTaken: toHms(seconds),
         date: new Date().toISOString().split('T')[0],
-        timestamp: Date.now(),
+        timestamp: Date.now().toString(),
       });
     } catch (error) {
       console.error('Error saving test score:', error);
